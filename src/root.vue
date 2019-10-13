@@ -13,12 +13,14 @@
         </div>
       </Zoom>
     </Offset>
+    <NodePicker />
   </main>
 </template>
 
 <script>
 import Offset from './components/offset.vue';
 import Zoom from './components/zoom.vue';
+import NodePicker from './components/node-picker.vue';
 
 export default {
   data() {
@@ -34,7 +36,8 @@ export default {
   },
   components: {
     Offset,
-    Zoom
+    Zoom,
+    NodePicker
   }
 };
 </script>
@@ -72,5 +75,28 @@ body {
   height: auto;
   max-width: calc(100vw - 4rem);
   max-height: calc(100vh - 4rem);
+}
+
+.icon {
+  display: block;
+  width: 2rem;
+  height: 2rem;
+  fill: #4b413f;
+}
+
+.icon.iot {
+  fill: #004e85;
+}
+
+.icon.extension {
+  display: block;
+  position: absolute;
+  right: 0.25rem;
+  top: 0.25rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  z-index: 1;
+  background: #fff;
+  border-radius: 50%;
 }
 </style>
