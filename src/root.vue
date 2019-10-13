@@ -1,7 +1,7 @@
 <template>
   <main id="root">
-    <div class="shift" :style="{transform: `translateX(${shiftX}px) translateY(${shiftY}px)`}">
-      <div class="zoom" :style="{transform: `scale(${zoom})`}" @dblclick="toggleZoom">
+    <Offset>
+      <Zoom>
         <div class="container">
           <img
             class="plan"
@@ -11,31 +11,30 @@
             alt
           />
         </div>
-      </div>
-    </div>
+      </Zoom>
+    </Offset>
   </main>
 </template>
 
 <script>
+import Offset from './components/offset.vue';
+import Zoom from './components/zoom.vue';
+
 export default {
   data() {
     return {
-      plan: 'eg.png',
-      zoom: 1,
-      shiftX: 0,
-      shiftY: 0
+      plan: 'eg.png'
     };
   },
   mounted() {
     //
   },
   methods: {
-    toggleZoom() {
-      this.zoom = this.zoom === 1 ? 1.5 : 1;
-    }
+    //
   },
   components: {
-    //
+    Offset,
+    Zoom
   }
 };
 </script>
@@ -60,27 +59,6 @@ body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-}
-
-.shift {
-  width: 100%;
-  height: 100%;
-  user-select: none;
-  will-change: transform;
-}
-
-.zoom {
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  padding: 2rem;
-  box-sizing: border-box;
-  transition: transform 0.3s;
-  will-change: transform;
-  z-index: 0;
 }
 
 .container {

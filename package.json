@@ -13,6 +13,7 @@
     "vue-template-compiler": "^2.6.10"
   },
   "dependencies": {
-    "vue": "^2.6.10"
+    "vue": "^2.6.10",
+    "vue2-touch-events": "^2.0.0"
   }
 }
