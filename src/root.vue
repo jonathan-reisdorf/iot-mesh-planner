@@ -13,7 +13,7 @@
         </div>
       </Zoom>
     </Offset>
-    <NodePicker />
+    <NodePicker @picked="onNodePicked" :tmpNode="tmpNode" />
   </main>
 </template>
 
@@ -25,14 +25,17 @@ import NodePicker from './components/node-picker.vue';
 export default {
   data() {
     return {
-      plan: 'eg.png'
+      plan: 'eg.png',
+      tmpNode: null
     };
   },
   mounted() {
     //
   },
   methods: {
-    //
+    onNodePicked(node) {
+      this.tmpNode = node;
+    }
   },
   components: {
     Offset,

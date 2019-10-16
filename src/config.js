@@ -96,5 +96,12 @@ export const NODES = [
     icon: 'smoke_detector',
     smart: 'passive',
     extension: true
+  },
+  {
+    id: 'smart_generic',
+    title: 'Generic Smart Device',
+    icon: 'generic',
+    smart: 'active',
+    extension: false
   }
 ];

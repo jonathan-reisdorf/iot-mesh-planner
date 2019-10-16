@@ -1,8 +1,9 @@
 <template>
-  <div class="node" :title="title">
+  <div class="node" :title="title" @click="$emit('click')">
     <DoorWindowSensor v-if="icon === 'door_window_sensor'" />
     <EthernetSocket v-if="icon === 'ethernet_socket'" />
     <EthernetSwitch v-if="icon === 'ethernet_switch'" />
+    <Generic v-if="icon === 'generic'" />
     <Hub v-if="icon === 'hub'" />
     <Light v-if="icon === 'light'" />
     <MotionSensor v-if="icon === 'motion_sensor'" />
@@ -18,6 +19,7 @@
 import DoorWindowSensor from '../icons/door-window-sensor.vue';
 import EthernetSocket from '../icons/ethernet-socket.vue';
 import EthernetSwitch from '../icons/ethernet-switch.vue';
+import Generic from '../icons/generic.vue';
 import Hub from '../icons/hub.vue';
 import Light from '../icons/light.vue';
 import MotionSensor from '../icons/motion-sensor.vue';
@@ -39,6 +41,7 @@ export default {
     DoorWindowSensor,
     EthernetSocket,
     EthernetSwitch,
+    Generic,
     Hub,
     Light,
     MotionSensor,

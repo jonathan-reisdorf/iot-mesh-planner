@@ -1,14 +1,16 @@
 <template>
   <div class="node-picker">
     <Node
-      class="node-picker__node"
       v-for="node in nodes"
+      class="node-picker__node"
+      :class="{'active': tmpNode && tmpNode.id === node.id}"
       v-bind:key="node.id"
       :id="node.id"
       :title="node.title"
       :icon="node.icon"
       :smart="node.smart"
       :extension="node.extension"
+      @click="$emit('picked', tmpNode && tmpNode.id === node.id ? null : {...node})"
     />
   </div>
 </template>
@@ -18,16 +20,11 @@ import { NODES } from '../config';
 import Node from './node.vue';
 
 export default {
+  props: ['tmpNode'],
   data() {
     return {
       nodes: NODES
     };
-  },
-  mounted() {
-    //
-  },
-  methods: {
-    //
   },
   components: {
     Node
@@ -59,5 +56,9 @@ export default {
 }
 .node-picker__node.node:hover {
   background-color: #ccc;
+}
+
+.node-picker__node.node.active {
+  background-color: #bbb;
 }
 </style>
