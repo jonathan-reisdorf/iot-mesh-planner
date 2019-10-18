@@ -35,7 +35,7 @@ export default {
     return {
       plan: 'eg.png',
       shiftingPlan: false,
-      nodes: [],
+      nodes: JSON.parse(localStorage.getItem('nodes') || '[]'),
       tmpNode: null
     };
   },
@@ -47,9 +47,9 @@ export default {
       this.tmpNode = node;
     },
     onNodes(nodes) {
-      console.log(nodes);
       this.tmpNode = null;
       this.nodes = nodes;
+      localStorage.setItem('nodes', JSON.stringify(nodes));
     }
   },
   components: {

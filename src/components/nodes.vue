@@ -2,7 +2,7 @@
   <div class="nodes" @mousemove="shift" v-touch:moving="shift" v-touch:end="place">
     <Node
       v-if="tmpNode && tmpX !== null && tmpY !== null"
-      class="node tmp"
+      class="tmp"
       :class="{smart: tmpNode.smart}"
       :id="tmpNode.id"
       :title="tmpNode.title"
@@ -14,14 +14,14 @@
     <Node
       v-for="(node, index) in nodes"
       v-bind:key="index"
-      class="node"
-      :class="{smart: node.smart}"
+      :class="{smart: node.smart, tmp: node.key === activeKey}"
       :id="node.id"
       :title="node.title"
       :icon="node.icon"
       :smart="node.smart"
       :extension="node.extension"
-      :style="{left: node.x + '%', top: node.y + '%' }"
+      :style="getNodeStyle(node)"
+      v-touch:start="event => setActiveKey(node.key, event)"
     />
   </div>
 </template>
@@ -34,6 +34,7 @@ export default {
   data() {
     return {
       containerEl: null,
+      activeKey: null,
       tmpX: null,
       tmpY: null
     };
@@ -42,6 +43,16 @@ export default {
     this.containerEl = this.getContainerEl();
   },
   methods: {
+    getNodeStyle(node) {
+      const { activeKey, tmpX, tmpY } = this;
+      const x = activeKey === node.key && tmpX !== null ? tmpX : node.x;
+      const y = activeKey === node.key && tmpY !== null ? tmpY : node.y;
+
+      return {
+        left: x + '%',
+        top: y + '%'
+      };
+    },
     getCoords(event) {
       const { clientX: x, clientY: y } = event.changedTouches
         ? event.changedTouches[0]
@@ -49,8 +60,8 @@ export default {
       return { x, y };
     },
     shift(event) {
-      const { tmpNode, containerEl } = this;
-      if (!tmpNode || !containerEl) {
+      const { tmpNode, activeKey, containerEl } = this;
+      if ((!tmpNode && !activeKey) || !containerEl) {
         return;
       }
 
@@ -73,16 +84,37 @@ export default {
         return;
       }
 
-      if (this.tmpNode) {
-        this.$emit(
-          'nodes',
-          this.nodes.concat({ ...this.tmpNode, x: this.tmpX, y: this.tmpY })
-        );
-      }
-      // TODO this.activeNodes
-
+      const { activeKey, tmpNode, tmpX, tmpY } = this;
+      this.activeKey = null;
       this.tmpX = null;
       this.tmpY = null;
+
+      if (!tmpX || !tmpY) {
+        return;
+      }
+
+      tmpNode &&
+        this.$emit(
+          'nodes',
+          this.nodes.concat({
+            ...tmpNode,
+            x: tmpX,
+            y: tmpY,
+            key: new Date().getTime()
+          })
+        );
+
+      activeKey &&
+        this.$emit(
+          'nodes',
+          this.nodes.map(node =>
+            node.key !== activeKey ? { ...node } : { ...node, x: tmpX, y: tmpY }
+          )
+        );
+    },
+    setActiveKey(key, event = null) {
+      event && event.stopPropagation();
+      this.activeKey = key;
     }
   },
   components: {
@@ -110,12 +142,15 @@ export default {
   height: auto;
   transform: translateX(-50%) translateY(-50%);
   will-change: left, top;
+  z-index: 0;
 }
 
 .node.smart {
   border-color: #004e85;
+  z-index: 1;
 }
 .node.tmp {
   cursor: none;
+  z-index: 2;
 }
 </style>

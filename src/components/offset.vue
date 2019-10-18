@@ -42,6 +42,10 @@ export default {
     startShift(event) {
       event.preventDefault();
 
+      if (event.buttons === 2) {
+        return;
+      }
+
       const coords = this.getCoords(event);
       this.startX = coords.x;
       this.startY = coords.y;
