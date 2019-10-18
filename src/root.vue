@@ -1,6 +1,6 @@
 <template>
   <main id="root">
-    <Offset @startShift="shiftingPlan = true" @endShift="shiftingPlan = false">
+    <Offset @startShift="isShiftingPlan = true" @endShift="isShiftingPlan = false">
       <Zoom>
         <div class="container" ref="containerEl">
           <img
@@ -8,19 +8,21 @@
             v-if="plan"
             :src="`plans/${plan}`"
             @mousedown="event => event.preventDefault()"
+            @load="onPlanLoaded"
             alt
           />
           <Nodes
+            v-if="isPlanLoaded"
             :tmpNode="tmpNode"
             :getContainerEl="() => $refs.containerEl"
-            :shiftingPlan="shiftingPlan"
+            :isShiftingPlan="isShiftingPlan"
             :nodes="nodes"
             @nodes="onNodes"
           />
         </div>
       </Zoom>
     </Offset>
-    <NodePicker @picked="onNodePicked" :tmpNode="tmpNode" />
+    <NodePicker v-if="isPlanLoaded" @picked="onNodePicked" :tmpNode="tmpNode" />
   </main>
 </template>
 
@@ -34,7 +36,8 @@ export default {
   data() {
     return {
       plan: 'eg.png',
-      shiftingPlan: false,
+      isShiftingPlan: false,
+      isPlanLoaded: false,
       nodes: JSON.parse(localStorage.getItem('nodes') || '[]'),
       tmpNode: null
     };
@@ -50,6 +53,9 @@ export default {
       this.tmpNode = null;
       this.nodes = nodes;
       localStorage.setItem('nodes', JSON.stringify(nodes));
+    },
+    onPlanLoaded() {
+      this.isPlanLoaded = true;
     }
   },
   components: {

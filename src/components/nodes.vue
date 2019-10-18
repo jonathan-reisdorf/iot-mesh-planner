@@ -23,14 +23,16 @@
       :style="getNodeStyle(node)"
       v-touch:start="event => setActiveKey(node.key, event)"
     />
+    <Lines :getContainerEl="getContainerEl" :nodes="nodes" />
   </div>
 </template>
 
 <script>
 import Node from './node.vue';
+import Lines from './lines.vue';
 
 export default {
-  props: ['getContainerEl', 'nodes', 'shiftingPlan', 'tmpNode'],
+  props: ['getContainerEl', 'nodes', 'isShiftingPlan', 'tmpNode'],
   data() {
     return {
       containerEl: null,
@@ -80,7 +82,7 @@ export default {
       this.tmpY = Math.max(Math.min(y, 100), 0);
     },
     place(event) {
-      if (this.shiftingPlan) {
+      if (this.isShiftingPlan) {
         return;
       }
 
@@ -130,7 +132,8 @@ export default {
     }
   },
   components: {
-    Node
+    Node,
+    Lines
   }
 };
 </script>
