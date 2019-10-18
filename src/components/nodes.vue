@@ -12,8 +12,8 @@
       :style="{left: tmpX + '%', top: tmpY + '%' }"
     />
     <Node
-      v-for="(node, index) in nodes"
-      v-bind:key="index"
+      v-for="node in nodes"
+      v-bind:key="node.key"
       :class="{smart: node.smart, tmp: node.key === activeKey}"
       :id="node.id"
       :title="node.title"
@@ -108,11 +108,23 @@ export default {
         this.$emit(
           'nodes',
           this.nodes.map(node =>
-            node.key !== activeKey ? { ...node } : { ...node, x: tmpX, y: tmpY }
+            node.key !== activeKey ? node : { ...node, x: tmpX, y: tmpY }
           )
         );
     },
+    removeNode(key, event = null) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      this.$emit('nodes', this.nodes.filter(node => node.key !== key));
+    },
     setActiveKey(key, event = null) {
+      if (event && event.buttons === 4) {
+        this.activeKey = null;
+        return this.removeNode(key, event);
+      }
+
       event && event.stopPropagation();
       this.activeKey = key;
     }
@@ -140,9 +152,16 @@ export default {
   border: 2px solid #4b413f;
   width: auto;
   height: auto;
-  transform: translateX(-50%) translateY(-50%);
-  will-change: left, top;
+  margin-left: calc(-2px - 1rem - 0.5vw);
+  margin-top: calc(-2px - 1rem - 0.5vw);
+  will-change: left, top, opacity;
+  transition: opacity 0.3s;
   z-index: 0;
+}
+
+.node:hover {
+  opacity: 0.7;
+  z-index: 2;
 }
 
 .node.smart {
@@ -151,6 +170,7 @@ export default {
 }
 .node.tmp {
   cursor: none;
+  opacity: 1;
   z-index: 2;
 }
 </style>
