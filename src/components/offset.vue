@@ -20,7 +20,8 @@ export default {
       pendingOffsetX: 0,
       pendingOffsetY: 0,
       storedOffsetX: 0,
-      storedOffsetY: 0
+      storedOffsetY: 0,
+      startedShifting: false
     };
   },
   computed: {
@@ -59,8 +60,18 @@ export default {
 
       this.pendingOffsetX = deltaX;
       this.pendingOffsetY = deltaY;
+
+      if (!this.startedShifting) {
+        this.startedShifting = true;
+        this.$emit('startShift');
+      }
     },
     endShift(event) {
+      const { startX = null, startY = null } = this;
+      if (startX === null || startY === null) {
+        return;
+      }
+
       event.preventDefault();
 
       const coords = this.getCoords(event);
@@ -75,6 +86,11 @@ export default {
         storedOffsetX: this.storedOffsetX + deltaX,
         storedOffsetY: this.storedOffsetY + deltaY
       });
+
+      if (this.startedShifting) {
+        this.startedShifting = false;
+        this.$emit('endShift');
+      }
     }
   }
 };

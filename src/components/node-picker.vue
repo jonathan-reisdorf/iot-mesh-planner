@@ -45,6 +45,7 @@ export default {
 }
 
 .node-picker__node.node {
+  position: relative;
   padding: 0.5vw 0.75vw;
   margin: 0.5vw;
   cursor: pointer;

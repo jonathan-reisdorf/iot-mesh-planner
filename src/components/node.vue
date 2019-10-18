@@ -56,7 +56,6 @@ export default {
 
 <style scoped>
 .node {
-  position: relative;
   flex: none;
   padding: 0.5vw;
 }

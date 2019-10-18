@@ -1,14 +1,21 @@
 <template>
   <main id="root">
-    <Offset>
+    <Offset @startShift="shiftingPlan = true" @endShift="shiftingPlan = false">
       <Zoom>
-        <div class="container">
+        <div class="container" ref="containerEl">
           <img
             class="plan"
             v-if="plan"
             :src="`plans/${plan}`"
             @mousedown="event => event.preventDefault()"
             alt
+          />
+          <Nodes
+            :tmpNode="tmpNode"
+            :getContainerEl="() => $refs.containerEl"
+            :shiftingPlan="shiftingPlan"
+            :nodes="nodes"
+            @nodes="onNodes"
           />
         </div>
       </Zoom>
@@ -21,11 +28,14 @@
 import Offset from './components/offset.vue';
 import Zoom from './components/zoom.vue';
 import NodePicker from './components/node-picker.vue';
+import Nodes from './components/nodes.vue';
 
 export default {
   data() {
     return {
       plan: 'eg.png',
+      shiftingPlan: false,
+      nodes: [],
       tmpNode: null
     };
   },
@@ -35,12 +45,18 @@ export default {
   methods: {
     onNodePicked(node) {
       this.tmpNode = node;
+    },
+    onNodes(nodes) {
+      console.log(nodes);
+      this.tmpNode = null;
+      this.nodes = nodes;
     }
   },
   components: {
     Offset,
     Zoom,
-    NodePicker
+    NodePicker,
+    Nodes
   }
 };
 </script>
