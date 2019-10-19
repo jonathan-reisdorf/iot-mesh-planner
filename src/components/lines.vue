@@ -26,46 +26,17 @@ export default {
       ratio,
       smartDevices,
       activeDevices,
-      hubDevice
+      hubDevice,
+      cachedDistances: {},
+      cachedNeighbors: [],
+      renderedLines: []
     };
   },
   mounted() {
     window.addEventListener('resize', this.onCanvasResize);
     const { canvas } = this.$refs;
     this.ctx = canvas.getContext('2d');
-
-    const { hubDevice, activeDevices, smartDevices } = this;
-    if (!hubDevice) {
-      return;
-    }
-
-    let { x: hubX, y: hubY } = hubDevice;
-    hubY = hubY * this.ratio;
-    const hubDeviceNeighbors = activeDevices
-      .filter(({ key }) => key !== hubDevice.key)
-      .map(node => {
-        let { x, y } = node;
-        y = y * this.ratio;
-        const dist = Math.sqrt(Math.pow(x - hubX, 2) + Math.pow(y - hubY, 2));
-        return { ...node, dist };
-      })
-      .sort((prev, next) => prev.dist - next.dist);
-    let wDist =
-      (
-        hubDeviceNeighbors
-          .filter(({ dist }) => dist <= 25)
-          .slice(0, 2)
-          .pop() || {}
-      ).dist || 25;
-    wDist = wDist < 20 ? 20 : wDist;
-    console.log(
-      this.ratio,
-      smartDevices,
-      activeDevices,
-      hubDevice,
-      hubDeviceNeighbors,
-      wDist * 1.5
-    );
+    this.draw();
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.onCanvasResize);
@@ -73,10 +44,108 @@ export default {
   methods: {
     onCanvasResize() {
       const { width, height } = this.containerEl.getBoundingClientRect();
+      const { canvas } = this.$refs;
       this.ratio = height / width;
       this.width = width;
       this.height = height;
-      console.log(width, height);
+      requestAnimationFrame(() => this.draw());
+    },
+    getNeighbors(node, nodes) {
+      const nodesWithDistances = this.getNodesWithDistances(node, nodes);
+
+      const wDist = Math.max(
+        (
+          nodesWithDistances
+            .filter(({ dist }) => dist <= 25)
+            .slice(0, 2)
+            .pop() || {}
+        ).dist || 25,
+        20
+      );
+
+      const neighbors = nodesWithDistances
+        .filter(({ dist }) => dist <= wDist * 1.5)
+        .concat(
+          this.cachedNeighbors
+            .filter(identifier =>
+              identifier.split(':').includes(String(node.key))
+            )
+            .map(identifier =>
+              parseInt(
+                identifier.split(':').find(part => part !== String(node.key)),
+                10
+              )
+            )
+            .map(key => nodesWithDistances.find(({ key: k }) => key === k))
+            .filter(({ dist }) => dist > wDist * 1.5)
+        );
+      this.cachedNeighbors = this.cachedNeighbors
+        .concat(neighbors.map(({ key }) => `${node.key}:${key}`))
+        .filter((item, index, arr) => arr.indexOf(item) === index);
+
+      return neighbors;
+    },
+    getNodesWithDistances(node, nodes) {
+      const { key: nodeKey, x: nodeX } = node;
+      const nodeY = node.y * this.ratio;
+
+      const { cachedDistances: dists } = this;
+      return nodes
+        .filter(({ key }) => key !== nodeKey)
+        .map(node => {
+          const cachedDist =
+            dists[`${node.key}:${nodeKey}`] || dists[`${nodeKey}:${node.key}`];
+          if (cachedDist) {
+            return { ...node, dist: cachedDist };
+          }
+
+          const x = node.x;
+          const y = node.y * this.ratio;
+          const dist = Math.sqrt(
+            Math.pow(x - nodeX, 2) + Math.pow(y - nodeY, 2)
+          );
+          dists[`${nodeKey}:${node.key}`] = dist;
+          return { ...node, dist };
+        })
+        .sort((prev, next) => prev.dist - next.dist);
+    },
+    getNodesWithNeighbors(nodes) {
+      this.cachedDistances = {};
+      this.cachedNeighbors = [];
+
+      return nodes.map(node => ({
+        ...node,
+        neighbors: this.getNeighbors(node, nodes)
+      }));
+    },
+    draw() {
+      const { activeDevices, ctx } = this;
+      this.renderedLines = [];
+      ctx.strokeStyle = '#004e85';
+
+      const nodesWithNeighbors = this.getNodesWithNeighbors(activeDevices);
+      nodesWithNeighbors.forEach(node => {
+        const { neighbors } = node;
+        neighbors.forEach(neighbor => {
+          if (this.renderedLines[`${neighbor.key}:${node.key}`]) {
+            return;
+          }
+
+          ctx.beginPath();
+          ctx.lineWidth = Math.max(
+            Math.min(3.5 - (neighbor.dist - 10) * 0.1, 3.5),
+            0.5
+          );
+          ctx.moveTo((node.x / 100) * this.width, (node.y / 100) * this.height);
+          ctx.lineTo(
+            (neighbor.x / 100) * this.width,
+            (neighbor.y / 100) * this.height
+          );
+          ctx.stroke();
+          this.renderedLines[`${node.key}:${neighbor.key}`] = true;
+        });
+      });
+      console.log(nodesWithNeighbors);
     }
   }
 };
