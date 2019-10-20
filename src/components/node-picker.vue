@@ -10,7 +10,7 @@
       :icon="node.icon"
       :smart="node.smart"
       :extension="node.extension"
-      @click="$emit('picked', tmpNode && tmpNode.id === node.id ? null : {...node})"
+      @click="$emit('picked', tmpNode && tmpNode.id === node.id ? null : {...node, key: 'tmp'})"
     />
   </div>
 </template>

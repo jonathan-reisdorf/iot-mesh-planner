@@ -1,5 +1,5 @@
 <template>
-  <svg class="icon iot" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
     <path d="M18 17h28a1 1 0 001-1V3a1 1 0 00-1-1H18a1 1 0 00-1 1v13a1 1 0 001 1zm1-13h26v11H19z" />
     <path
       d="M24.5 6A3.5 3.5 0 1028 9.5 3.5 3.5 0 0024.5 6zm0 5A1.5 1.5 0 1126 9.5a1.5 1.5 0 01-1.5 1.5zM39.5 6A3.5 3.5 0 1043 9.5 3.5 3.5 0 0039.5 6zm0 5A1.5 1.5 0 1141 9.5a1.5 1.5 0 01-1.5 1.5z"

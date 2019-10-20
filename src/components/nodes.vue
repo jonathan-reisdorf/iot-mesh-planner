@@ -23,7 +23,12 @@
       :style="getNodeStyle(node)"
       v-touch:start="event => setActiveKey(node.key, event)"
     />
-    <Lines :getContainerEl="getContainerEl" :nodes="nodes" :tmpNode="tmpNode" />
+    <Lines
+      :getContainerEl="getContainerEl"
+      :nodes="nodes"
+      :tmpNode="tmpNode"
+      :movingNode="movingNode"
+    />
   </div>
 </template>
 
@@ -37,6 +42,7 @@ export default {
     return {
       containerEl: null,
       activeKey: null,
+      movingNode: null,
       tmpX: null,
       tmpY: null
     };
@@ -80,6 +86,11 @@ export default {
       const y = ((pointerY - containerY) / height) * 100;
       this.tmpX = Math.max(Math.min(x, 100), 0);
       this.tmpY = Math.max(Math.min(y, 100), 0);
+      this.movingNode = {
+        x: this.tmpX,
+        y: this.tmpY,
+        key: activeKey || 'tmp'
+      };
     },
     place(event) {
       if (this.isShiftingPlan) {

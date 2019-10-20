@@ -4,7 +4,7 @@
 
 <script>
 export default {
-  props: ['getContainerEl', 'nodes', 'tmpNode'],
+  props: ['getContainerEl', 'nodes', 'tmpNode', 'movingNode'],
   data() {
     const containerEl = this.getContainerEl();
     const { width, height } = containerEl.getBoundingClientRect();
@@ -33,11 +33,28 @@ export default {
   },
   watch: {
     nodes() {
-      Object.assign(this, this.getDevices());
-      this.draw();
+      requestAnimationFrame(() => {
+        Object.assign(this, this.getDevices());
+        this.draw();
+      });
     },
     tmpNode() {
       Object.assign(this, this.getDevices());
+    },
+    movingNode({ key, x, y } = {}) {
+      const node = this.smartDevices.find(
+        ({ key: nodeKey }) => nodeKey === key
+      );
+      if (!node) {
+        return;
+      }
+
+      node.x = x;
+      node.y = y;
+      Object.keys(this.cachedDistances)
+        .filter(k => k.split(':').includes(String(key)))
+        .forEach(k => delete this.cachedDistances[k]);
+      this.draw(false);
     }
   },
   methods: {
@@ -50,9 +67,12 @@ export default {
       const activeDevices = smartDevices.filter(
         ({ smart }) => smart === 'active' || smart === 'hub'
       );
-      const hubDevices = activeDevices.filter(({ smart }) => smart === 'hub');
+      const passiveDevices = smartDevices.filter(
+        ({ smart }) => smart === 'passive'
+      ); // TODO RENDER
+      const hubDevices = activeDevices.filter(({ smart }) => smart === 'hub'); // TODO USE
 
-      return { activeDevices, hubDevices };
+      return { smartDevices, activeDevices, passiveDevices, hubDevices };
     },
     onCanvasResize() {
       const { width, height } = this.containerEl.getBoundingClientRect();
@@ -65,7 +85,7 @@ export default {
     getNeighbors(node, nodes) {
       const nodesWithDistances = this.getNodesWithDistances(node, nodes);
 
-      const wDist = Math.max(
+      /* const wDist = Math.max(
         (
           nodesWithDistances
             .filter(({ dist }) => dist <= 25)
@@ -73,7 +93,8 @@ export default {
             .pop() || {}
         ).dist || 25,
         20
-      );
+      ); */
+      const wDist = 25;
 
       const neighbors = nodesWithDistances
         .filter(({ dist }) => dist <= wDist * 1.5)

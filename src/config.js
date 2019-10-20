@@ -98,10 +98,17 @@ export const NODES = [
     extension: true
   },
   {
+    id: 'generic',
+    title: 'Generic Device',
+    icon: 'generic',
+    smart: false,
+    extension: false
+  },
+  {
     id: 'smart_generic',
     title: 'Generic Smart Device',
     icon: 'generic',
     smart: 'active',
-    extension: false
+    extension: true
   }
 ];
