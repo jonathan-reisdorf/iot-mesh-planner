@@ -23,7 +23,7 @@
       :style="getNodeStyle(node)"
       v-touch:start="event => setActiveKey(node.key, event)"
     />
-    <Lines :getContainerEl="getContainerEl" :nodes="nodes" />
+    <Lines :getContainerEl="getContainerEl" :nodes="nodes" :tmpNode="tmpNode" />
   </div>
 </template>
 

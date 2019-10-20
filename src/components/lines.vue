@@ -4,19 +4,11 @@
 
 <script>
 export default {
-  props: ['getContainerEl', 'nodes'],
+  props: ['getContainerEl', 'nodes', 'tmpNode'],
   data() {
     const containerEl = this.getContainerEl();
     const { width, height } = containerEl.getBoundingClientRect();
     const ratio = height / width;
-
-    const smartDevices = this.nodes
-      .map(node => ({ ...node }))
-      .filter(({ smart }) => smart);
-    const activeDevices = smartDevices.filter(
-      ({ smart }) => smart === 'active' || smart === 'hub'
-    );
-    const hubDevice = activeDevices.find(({ smart }) => smart === 'hub');
 
     return {
       ctx: null,
@@ -24,12 +16,10 @@ export default {
       height,
       containerEl,
       ratio,
-      smartDevices,
-      activeDevices,
-      hubDevice,
       cachedDistances: {},
       cachedNeighbors: [],
-      renderedLines: []
+      renderedLines: [],
+      ...this.getDevices()
     };
   },
   mounted() {
@@ -41,14 +31,36 @@ export default {
   beforeDestroy() {
     window.removeEventListener('resize', this.onCanvasResize);
   },
+  watch: {
+    nodes() {
+      Object.assign(this, this.getDevices());
+      this.draw();
+    },
+    tmpNode() {
+      Object.assign(this, this.getDevices());
+    }
+  },
   methods: {
+    getDevices() {
+      const smartDevices = this.nodes
+        .concat(this.tmpNode)
+        .filter(node => node)
+        .map(node => ({ ...node }))
+        .filter(({ smart }) => smart);
+      const activeDevices = smartDevices.filter(
+        ({ smart }) => smart === 'active' || smart === 'hub'
+      );
+      const hubDevices = activeDevices.filter(({ smart }) => smart === 'hub');
+
+      return { activeDevices, hubDevices };
+    },
     onCanvasResize() {
       const { width, height } = this.containerEl.getBoundingClientRect();
       const { canvas } = this.$refs;
       this.ratio = height / width;
       this.width = width;
       this.height = height;
-      requestAnimationFrame(() => this.draw());
+      this.draw(false);
     },
     getNeighbors(node, nodes) {
       const nodesWithDistances = this.getNodesWithDistances(node, nodes);
@@ -109,43 +121,54 @@ export default {
         })
         .sort((prev, next) => prev.dist - next.dist);
     },
-    getNodesWithNeighbors(nodes) {
-      this.cachedDistances = {};
+    getNodesWithNeighbors(nodes, deleteCachedDists = true) {
       this.cachedNeighbors = [];
+      deleteCachedDists && (this.cachedDistances = {});
 
       return nodes.map(node => ({
         ...node,
         neighbors: this.getNeighbors(node, nodes)
       }));
     },
-    draw() {
-      const { activeDevices, ctx } = this;
-      this.renderedLines = [];
-      ctx.strokeStyle = '#004e85';
+    draw(deleteCachedDists = true) {
+      requestAnimationFrame(() => {
+        const { canvas } = this.$refs;
+        const { activeDevices, ctx } = this;
 
-      const nodesWithNeighbors = this.getNodesWithNeighbors(activeDevices);
-      nodesWithNeighbors.forEach(node => {
-        const { neighbors } = node;
-        neighbors.forEach(neighbor => {
-          if (this.renderedLines[`${neighbor.key}:${node.key}`]) {
-            return;
-          }
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        this.renderedLines = [];
+        ctx.strokeStyle = '#004e85';
 
-          ctx.beginPath();
-          ctx.lineWidth = Math.max(
-            Math.min(3.5 - (neighbor.dist - 10) * 0.1, 3.5),
-            0.5
-          );
-          ctx.moveTo((node.x / 100) * this.width, (node.y / 100) * this.height);
-          ctx.lineTo(
-            (neighbor.x / 100) * this.width,
-            (neighbor.y / 100) * this.height
-          );
-          ctx.stroke();
-          this.renderedLines[`${node.key}:${neighbor.key}`] = true;
+        const nodesWithNeighbors = this.getNodesWithNeighbors(
+          activeDevices,
+          deleteCachedDists
+        );
+
+        nodesWithNeighbors.forEach(node => {
+          const { neighbors } = node;
+          neighbors.forEach(neighbor => {
+            if (this.renderedLines[`${neighbor.key}:${node.key}`]) {
+              return;
+            }
+
+            ctx.beginPath();
+            ctx.lineWidth = Math.max(
+              Math.min(3.5 - (neighbor.dist - 10) * 0.1, 3.5),
+              0.5
+            );
+            ctx.moveTo(
+              (node.x / 100) * this.width,
+              (node.y / 100) * this.height
+            );
+            ctx.lineTo(
+              (neighbor.x / 100) * this.width,
+              (neighbor.y / 100) * this.height
+            );
+            ctx.stroke();
+            this.renderedLines[`${node.key}:${neighbor.key}`] = true;
+          });
         });
       });
-      console.log(nodesWithNeighbors);
     }
   }
 };
