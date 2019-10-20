@@ -82,20 +82,10 @@ export default {
       this.height = height;
       this.draw(false);
     },
-    getNeighbors(node, nodes) {
-      const nodesWithDistances = this.getNodesWithDistances(node, nodes);
-
-      /* const wDist = Math.max(
-        (
-          nodesWithDistances
-            .filter(({ dist }) => dist <= 25)
-            .slice(0, 2)
-            .pop() || {}
-        ).dist || 25,
-        20
-      ); */
-      const wDist = 25;
-
+    getNeighbors(node, nodes, refNodes = null) {
+      refNodes = refNodes || nodes;
+      const nodesWithDistances = this.getNodesWithDistances(node, refNodes);
+      const wDist = node.smart === 'passive' ? 20 : 25;
       const neighbors = nodesWithDistances
         .filter(({ dist }) => dist <= wDist * 1.5)
         .concat(
@@ -142,53 +132,61 @@ export default {
         })
         .sort((prev, next) => prev.dist - next.dist);
     },
-    getNodesWithNeighbors(nodes, deleteCachedDists = true) {
+    getNodesWithNeighbors(nodes, refNodes, deleteCachedDists = true) {
       this.cachedNeighbors = [];
       deleteCachedDists && (this.cachedDistances = {});
 
       return nodes.map(node => ({
         ...node,
-        neighbors: this.getNeighbors(node, nodes)
+        neighbors: this.getNeighbors(node, nodes, refNodes)
       }));
+    },
+    drawLines(nodesWithNeighbors) {
+      const { ctx } = this;
+
+      nodesWithNeighbors.forEach(node => {
+        const { neighbors } = node;
+        neighbors.forEach(neighbor => {
+          if (this.renderedLines[`${neighbor.key}:${node.key}`]) {
+            return;
+          }
+
+          ctx.beginPath();
+          ctx.lineWidth = Math.max(
+            Math.min(3.5 - (neighbor.dist - 10) * 0.1, 3.5),
+            0.5
+          );
+          ctx.moveTo((node.x / 100) * this.width, (node.y / 100) * this.height);
+          ctx.lineTo(
+            (neighbor.x / 100) * this.width,
+            (neighbor.y / 100) * this.height
+          );
+          ctx.stroke();
+          this.renderedLines[`${node.key}:${neighbor.key}`] = true;
+        });
+      });
     },
     draw(deleteCachedDists = true) {
       requestAnimationFrame(() => {
         const { canvas } = this.$refs;
-        const { activeDevices, ctx } = this;
+        const { activeDevices, passiveDevices, ctx } = this;
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         this.renderedLines = [];
         ctx.strokeStyle = '#004e85';
 
-        const nodesWithNeighbors = this.getNodesWithNeighbors(
-          activeDevices,
-          deleteCachedDists
+        ctx.setLineDash([]);
+        this.drawLines(
+          this.getNodesWithNeighbors(activeDevices, null, deleteCachedDists)
         );
-
-        nodesWithNeighbors.forEach(node => {
-          const { neighbors } = node;
-          neighbors.forEach(neighbor => {
-            if (this.renderedLines[`${neighbor.key}:${node.key}`]) {
-              return;
-            }
-
-            ctx.beginPath();
-            ctx.lineWidth = Math.max(
-              Math.min(3.5 - (neighbor.dist - 10) * 0.1, 3.5),
-              0.5
-            );
-            ctx.moveTo(
-              (node.x / 100) * this.width,
-              (node.y / 100) * this.height
-            );
-            ctx.lineTo(
-              (neighbor.x / 100) * this.width,
-              (neighbor.y / 100) * this.height
-            );
-            ctx.stroke();
-            this.renderedLines[`${node.key}:${neighbor.key}`] = true;
-          });
-        });
+        ctx.setLineDash([5, 3]);
+        this.drawLines(
+          this.getNodesWithNeighbors(
+            passiveDevices,
+            activeDevices,
+            deleteCachedDists
+          )
+        );
       });
     }
   }
