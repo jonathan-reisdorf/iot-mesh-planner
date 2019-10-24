@@ -1,12 +1,11 @@
 <template>
   <main id="root">
-    <Offset @startShift="isShiftingPlan = true" @endShift="isShiftingPlan = false">
+    <Offset v-if="plan" @startShift="isShiftingPlan = true" @endShift="isShiftingPlan = false">
       <Zoom>
         <div class="container" ref="containerEl">
           <img
             class="plan"
-            v-if="plan"
-            :src="`plans/${plan}`"
+            :src="plan.image"
             @mousedown="event => event.preventDefault()"
             @load="onPlanLoaded"
             alt
@@ -22,28 +21,28 @@
         </div>
       </Zoom>
     </Offset>
-    <NodePicker v-if="isPlanLoaded" @picked="onNodePicked" :tmpNode="tmpNode" />
+    <NodePicker v-if="plan && isPlanLoaded" @picked="onNodePicked" :tmpNode="tmpNode" />
+    <PlanManager v-if="!plan || isPlanManagerOpened" @selectedPlan="setPlan" />
   </main>
 </template>
 
 <script>
-import Offset from './components/offset.vue';
-import Zoom from './components/zoom.vue';
 import NodePicker from './components/node-picker.vue';
 import Nodes from './components/nodes.vue';
+import Offset from './components/offset.vue';
+import PlanManager from './components/plan-manager.vue';
+import Zoom from './components/zoom.vue';
 
 export default {
   data() {
     return {
-      plan: 'eg.png',
+      plan: null,
       isShiftingPlan: false,
       isPlanLoaded: false,
-      nodes: JSON.parse(localStorage.getItem('nodes') || '[]'),
+      isPlanManagerOpened: true,
+      nodes: [],
       tmpNode: null
     };
-  },
-  mounted() {
-    //
   },
   methods: {
     onNodePicked(node) {
@@ -52,17 +51,28 @@ export default {
     onNodes(nodes) {
       this.tmpNode = null;
       this.nodes = nodes;
-      localStorage.setItem('nodes', JSON.stringify(nodes));
+      localStorage.setItem(
+        `nodes_${this.plan.fileName}`,
+        JSON.stringify(nodes)
+      );
     },
     onPlanLoaded() {
       this.isPlanLoaded = true;
+    },
+    setPlan(plan) {
+      this.isPlanManagerOpened = false;
+      this.nodes = JSON.parse(
+        localStorage.getItem(`nodes_${plan.fileName}`) || '[]'
+      );
+      this.plan = plan;
     }
   },
   components: {
-    Offset,
-    Zoom,
     NodePicker,
-    Nodes
+    Nodes,
+    Offset,
+    PlanManager,
+    Zoom
   }
 };
 </script>
@@ -81,6 +91,10 @@ html {
 body {
   font-family: monospace;
   color: #000;
+}
+
+::-moz-focus-inner {
+  border: 0;
 }
 
 #root {
