@@ -36,7 +36,7 @@
 import Node from './node.vue';
 import Lines from './lines.vue';
 
-const START_MOVING_TIMEOUT = 200;
+import { NODES_START_MOVING_TIMEOUT } from '../config';
 
 export default {
   props: ['getContainerEl', 'nodes', 'isShiftingPlan', 'tmpNode'],
@@ -97,6 +97,7 @@ export default {
     },
     place(event) {
       clearTimeout(this.startMovingTimeout);
+
       if (this.isShiftingPlan) {
         return;
       }
@@ -145,7 +146,7 @@ export default {
       event && event.stopPropagation();
       this.startMovingTimeout = setTimeout(
         () => (this.activeKey = key),
-        START_MOVING_TIMEOUT
+        NODES_START_MOVING_TIMEOUT
       );
     }
   },

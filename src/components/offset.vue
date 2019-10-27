@@ -12,8 +12,7 @@
 </template>
 
 <script>
-const PLAN_MOVE_THRESHOLD = 10;
-const PLAN_MOVE_TIMEOUT = 300;
+import { PLAN_MOVE_THRESHOLD, PLAN_MOVE_TIMEOUT } from '../config';
 
 export default {
   data() {

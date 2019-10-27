@@ -112,3 +112,11 @@ export const NODES = [
     extension: true
   }
 ];
+
+export const DEFAULT_SIGNAL_STRENGTH_PASSIVE = 30;
+export const DEFAULT_SIGNAL_STRENGTH_ACTIVE = 35;
+
+export const NODES_START_MOVING_TIMEOUT = 200;
+
+export const PLAN_MOVE_THRESHOLD = 10;
+export const PLAN_MOVE_TIMEOUT = 300;

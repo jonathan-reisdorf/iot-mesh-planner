@@ -3,6 +3,11 @@
 </template>
 
 <script>
+import {
+  DEFAULT_SIGNAL_STRENGTH_PASSIVE,
+  DEFAULT_SIGNAL_STRENGTH_ACTIVE
+} from '../config';
+
 export default {
   props: ['getContainerEl', 'nodes', 'tmpNode', 'movingNode'],
   data() {
@@ -85,9 +90,12 @@ export default {
     getNeighbors(node, nodes, refNodes = null) {
       refNodes = refNodes || nodes;
       const nodesWithDistances = this.getNodesWithDistances(node, refNodes);
-      const wDist = node.smart === 'passive' ? 20 : 25;
+      const wDist =
+        node.smart === 'passive'
+          ? DEFAULT_SIGNAL_STRENGTH_PASSIVE
+          : DEFAULT_SIGNAL_STRENGTH_ACTIVE;
       const neighbors = nodesWithDistances
-        .filter(({ dist }) => dist <= wDist * 1.5)
+        .filter(({ dist }) => dist <= wDist)
         .concat(
           this.cachedNeighbors
             .filter(identifier =>
@@ -100,7 +108,7 @@ export default {
               )
             )
             .map(key => nodesWithDistances.find(({ key: k }) => key === k))
-            .filter(({ dist }) => dist > wDist * 1.5)
+            .filter(({ dist }) => dist > wDist)
         );
       this.cachedNeighbors = this.cachedNeighbors
         .concat(neighbors.map(({ key }) => `${node.key}:${key}`))
