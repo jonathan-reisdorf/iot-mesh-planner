@@ -12,6 +12,9 @@
 </template>
 
 <script>
+const PLAN_MOVE_THRESHOLD = 10;
+const PLAN_MOVE_TIMEOUT = 300;
+
 export default {
   data() {
     return {
@@ -21,7 +24,8 @@ export default {
       pendingOffsetY: 0,
       storedOffsetX: 0,
       storedOffsetY: 0,
-      startedShifting: false
+      startedShifting: false,
+      startShiftTimeout: null
     };
   },
   computed: {
@@ -49,6 +53,11 @@ export default {
       const coords = this.getCoords(event);
       this.startX = coords.x;
       this.startY = coords.y;
+
+      this.startShiftTimeout = setTimeout(
+        () => delete this.startShiftTimeout,
+        PLAN_MOVE_TIMEOUT
+      );
     },
     shift(event) {
       const { startX = null, startY = null } = this;
@@ -62,6 +71,18 @@ export default {
       const deltaX = coords.x - startX;
       const deltaY = coords.y - startY;
 
+      if (
+        Math.abs(deltaX) + Math.abs(deltaY) < PLAN_MOVE_THRESHOLD &&
+        this.startShiftTimeout
+      ) {
+        return;
+      }
+
+      if (this.startShiftTimeout) {
+        clearTimeout(this.startShiftTimeout);
+        delete this.startShiftTimeout;
+      }
+
       this.pendingOffsetX = deltaX;
       this.pendingOffsetY = deltaY;
 
@@ -71,6 +92,16 @@ export default {
       }
     },
     endShift(event) {
+      if (this.startShiftTimeout && !this.startedShifting) {
+        Object.assign(this, {
+          startX: null,
+          startY: null
+        });
+      }
+
+      clearTimeout(this.startShiftTimeout);
+      delete this.startShiftTimeout;
+
       const { startX = null, startY = null } = this;
       if (startX === null || startY === null) {
         return;
