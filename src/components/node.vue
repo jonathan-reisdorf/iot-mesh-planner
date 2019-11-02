@@ -1,17 +1,17 @@
 <template>
   <div class="node" :title="title" @click="$emit('click')">
-    <DoorWindowSensor v-if="icon === 'door_window_sensor'" />
-    <EthernetSocket v-if="icon === 'ethernet_socket'" />
-    <EthernetSwitch v-if="icon === 'ethernet_switch'" />
-    <Generic v-if="icon === 'generic'" />
-    <Hub v-if="icon === 'hub'" />
-    <Light v-if="icon === 'light'" />
-    <MotionSensor v-if="icon === 'motion_sensor'" />
-    <PlugSocket v-if="icon === 'plug_socket'" />
-    <SmokeDetector v-if="icon === 'smoke_detector'" />
-    <SwitchIcon v-if="icon === 'switch'" />
-    <TemperatureSensor v-if="icon === 'temperature_sensor'" />
-    <Wireless v-if="extension" />
+    <DoorWindowSensor v-if="icon === 'door_window_sensor'" :class="iconClass" />
+    <EthernetSocket v-if="icon === 'ethernet_socket'" :class="iconClass" />
+    <EthernetSwitch v-if="icon === 'ethernet_switch'" :class="iconClass" />
+    <Generic v-if="icon === 'generic'" :class="iconClass" />
+    <Hub v-if="icon === 'hub'" :class="iconClass" />
+    <Light v-if="icon === 'light'" :class="iconClass" />
+    <MotionSensor v-if="icon === 'motion_sensor'" :class="iconClass" />
+    <PlugSocket v-if="icon === 'plug_socket'" :class="iconClass" />
+    <SmokeDetector v-if="icon === 'smoke_detector'" :class="iconClass" />
+    <SwitchIcon v-if="icon === 'switch'" :class="iconClass" />
+    <TemperatureSensor v-if="icon === 'temperature_sensor'" :class="iconClass" />
+    <Wireless v-if="smart && extension" />
   </div>
 </template>
 
@@ -31,11 +31,17 @@ import Wireless from '../icons/wireless.vue';
 
 export default {
   props: {
-    id: String,
     title: String,
     icon: String,
     smart: Boolean | String,
     extension: Boolean
+  },
+  computed: {
+    iconClass() {
+      return {
+        iot: this.smart && !this.extension
+      };
+    }
   },
   components: {
     DoorWindowSensor,
@@ -58,5 +64,25 @@ export default {
 .node {
   flex: none;
   padding: 0.5vw;
+}
+
+.icon {
+  fill: #4b413f;
+}
+
+.icon.iot {
+  fill: #004e85;
+}
+
+.icon.extension {
+  display: block;
+  position: absolute;
+  right: 0.25rem;
+  top: 0.25rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  z-index: 1;
+  background: #fff;
+  border-radius: 50%;
 }
 </style>

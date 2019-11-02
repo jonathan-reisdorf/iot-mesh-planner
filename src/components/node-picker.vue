@@ -3,14 +3,13 @@
     <Node
       v-for="node in nodes"
       class="node-picker__node"
-      :class="{'active': tmpNode && tmpNode.id === node.id}"
-      v-bind:key="node.id"
-      :id="node.id"
+      :class="{'active': tmpNode && tmpNode.type === node.type}"
+      v-bind:key="node.type"
       :title="node.title"
       :icon="node.icon"
       :smart="node.smart"
       :extension="node.extension"
-      @click="$emit('picked', tmpNode && tmpNode.id === node.id ? null : {...node, key: 'tmp'})"
+      @click="$emit('picked', tmpNode && tmpNode.type === node.type ? null : {...node, key: 'tmp'})"
     />
   </div>
 </template>

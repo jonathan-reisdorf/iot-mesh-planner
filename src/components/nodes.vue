@@ -4,7 +4,6 @@
       v-if="tmpNode && tmpX !== null && tmpY !== null"
       class="tmp"
       :class="{smart: tmpNode.smart}"
-      :id="tmpNode.id"
       :title="tmpNode.title"
       :icon="tmpNode.icon"
       :smart="tmpNode.smart"
@@ -15,13 +14,13 @@
       v-for="node in nodes"
       v-bind:key="node.key"
       :class="{smart: node.smart, tmp: node.key === activeKey}"
-      :id="node.id"
       :title="node.title"
       :icon="node.icon"
       :smart="node.smart"
       :extension="node.extension"
       :style="getNodeStyle(node)"
       v-touch:start="event => setActiveKey(node.key, event)"
+      v-touch:end="event => showNodeSettings(node, event)"
     />
     <Lines
       :getContainerEl="getContainerEl"
@@ -148,6 +147,13 @@ export default {
         () => (this.activeKey = key),
         NODES_START_MOVING_TIMEOUT
       );
+    },
+    showNodeSettings(node, event = null) {
+      if (node.key === this.activeKey) {
+        return;
+      }
+
+      this.$emit('showNodeSettings', node);
     }
   },
   components: {

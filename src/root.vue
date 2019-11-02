@@ -17,18 +17,26 @@
             :isShiftingPlan="isShiftingPlan"
             :nodes="nodes"
             @nodes="onNodes"
+            @showNodeSettings="showNodeSettings"
           />
         </div>
       </Zoom>
     </Offset>
     <NodePicker v-if="plan && isPlanLoaded" @picked="onNodePicked" :tmpNode="tmpNode" />
     <PlanManager v-if="!plan || isPlanManagerOpened" @selectedPlan="setPlan" />
+    <NodeSettings
+      v-if="settingsNode"
+      :node="settingsNode"
+      @discard="discardNodeSettings"
+      @save="saveNodeSettings"
+    />
   </main>
 </template>
 
 <script>
 import NodePicker from './components/node-picker.vue';
 import Nodes from './components/nodes.vue';
+import NodeSettings from './components/node-settings.vue';
 import Offset from './components/offset.vue';
 import PlanManager from './components/plan-manager.vue';
 import Zoom from './components/zoom.vue';
@@ -41,7 +49,8 @@ export default {
       isPlanLoaded: false,
       isPlanManagerOpened: true,
       nodes: [],
-      tmpNode: null
+      tmpNode: null,
+      settingsNode: null
     };
   },
   methods: {
@@ -49,6 +58,8 @@ export default {
       this.tmpNode = node;
     },
     onNodes(nodes) {
+      nodes = nodes.map(node => ({ ...node, type: undefined }));
+
       this.tmpNode = null;
       this.nodes = nodes;
       localStorage.setItem(
@@ -65,11 +76,28 @@ export default {
         localStorage.getItem(`nodes_${plan.fileName}`) || '[]'
       );
       this.plan = plan;
+    },
+    showNodeSettings(node) {
+      this.settingsNode = node;
+    },
+    discardNodeSettings() {
+      this.settingsNode = null;
+    },
+    saveNodeSettings(node) {
+      const target = this.nodes.find(({ key }) => key === node.key);
+      if (!target) {
+        return;
+      }
+
+      this.settingsNode = null;
+      Object.assign(target, node);
+      this.onNodes(this.nodes);
     }
   },
   components: {
     NodePicker,
     Nodes,
+    NodeSettings,
     Offset,
     PlanManager,
     Zoom
@@ -120,22 +148,5 @@ body {
   display: block;
   width: 2rem;
   height: 2rem;
-  fill: #4b413f;
-}
-
-.icon.iot {
-  fill: #004e85;
-}
-
-.icon.extension {
-  display: block;
-  position: absolute;
-  right: 0.25rem;
-  top: 0.25rem;
-  width: 1.5rem;
-  height: 1.5rem;
-  z-index: 1;
-  background: #fff;
-  border-radius: 50%;
 }
 </style>
