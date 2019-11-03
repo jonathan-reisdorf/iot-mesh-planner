@@ -12,6 +12,7 @@
     <SwitchIcon v-if="icon === 'switch'" :class="iconClass" />
     <TemperatureSensor v-if="icon === 'temperature_sensor'" :class="iconClass" />
     <Wireless v-if="smart && extension" />
+    <Note class="note" :title="note" v-if="note" />
   </div>
 </template>
 
@@ -23,6 +24,7 @@ import Generic from '../icons/generic.vue';
 import Hub from '../icons/hub.vue';
 import Light from '../icons/light.vue';
 import MotionSensor from '../icons/motion-sensor.vue';
+import Note from '../icons/note.vue';
 import PlugSocket from '../icons/plug-socket.vue';
 import SmokeDetector from '../icons/smoke-detector.vue';
 import SwitchIcon from '../icons/switch.vue';
@@ -34,7 +36,8 @@ export default {
     title: String,
     icon: String,
     smart: Boolean | String,
-    extension: Boolean
+    extension: Boolean,
+    note: String
   },
   computed: {
     iconClass() {
@@ -51,6 +54,7 @@ export default {
     Hub,
     Light,
     MotionSensor,
+    Note,
     PlugSocket,
     SmokeDetector,
     SwitchIcon,
@@ -84,5 +88,19 @@ export default {
   z-index: 1;
   background: #fff;
   border-radius: 50%;
+}
+
+.icon.note {
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: -0.25rem;
+  width: 1rem;
+  height: 1rem;
+  margin-left: -0.5rem;
+  fill: #e8a87c;
+  stroke: #fff;
+  stroke-width: 0.3rem;
+  z-index: 1;
 }
 </style>

@@ -18,6 +18,7 @@
       :icon="node.icon"
       :smart="node.smart"
       :extension="node.extension"
+      :note="node.note"
       :style="getNodeStyle(node)"
       v-touch:start="event => setActiveKey(node.key, event)"
       v-touch:end="event => showNodeSettings(node, event)"

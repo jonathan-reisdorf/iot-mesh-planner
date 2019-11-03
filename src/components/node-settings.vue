@@ -2,12 +2,12 @@
   <div class="container" @click="discard">
     <form class="nodeSettings" @click="event => event.stopPropagation()" @submit="save">
       <div class="nodeSettings__header">
-        <Node :icon="icon" :smart="smart" :extension="extension" />
+        <Node :icon="icon" :smart="smart" :extension="extension" :note="note" />
         <span class="nodeSettings__title">{{ title }}</span>
       </div>
       <div class="row">
         <label class="label" for="settings_title">Name</label>
-        <input class="input" id="settings_title" autocomplete="off" autofocus v-model="title" />
+        <input class="input" id="settings_title" autocomplete="off" v-model="title" />
       </div>
       <div class="row">
         <label class="label" for="settings_icon">Icon</label>
@@ -36,13 +36,8 @@
         </select>
       </div>
       <div class="row">
-        <label class="label" for="settings_installation_height">Installation height</label>
-        <input
-          class="input"
-          id="settings_installation_height"
-          autofocus
-          v-model="installation_height"
-        />
+        <label class="label" for="settings_note">Note</label>
+        <input class="input" id="settings_note" autocomplete="off" v-model="note" />
       </div>
       <div class="nodeSettings__footer">
         <button class="button" type="button" @click="discard">Cancel</button>
@@ -75,10 +70,10 @@ export default {
     node: Object
   },
   data() {
-    const { installation_height = '' } = this.node;
+    const { note = '' } = this.node;
     return {
       ...this.node,
-      installation_height,
+      note,
       icons: ICONS
     };
   },
@@ -91,16 +86,14 @@ export default {
     },
     save(event) {
       event.preventDefault();
-      const { title, icon, smart, extension, installation_height } = this;
+      const { title, icon, smart, extension, note } = this;
       this.$emit('save', {
         ...this.node,
         title,
         icon,
         smart,
         extension,
-        installation_height: installation_height
-          ? installation_height
-          : undefined
+        note: note ? note : undefined
       });
     }
   },
@@ -140,6 +133,7 @@ export default {
   flex: none;
   background: #fff;
   color: #333;
+  font-size: 0.8rem;
   width: 30rem;
   min-width: 300px;
   max-width: 100%;
@@ -154,7 +148,7 @@ export default {
   flex-flow: row nowrap;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.75rem;
   margin-bottom: 0.5rem;
   background-color: #eee;
 }
@@ -164,7 +158,7 @@ export default {
   flex-flow: row nowrap;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem;
+  padding: 0.5rem 0.75rem;
   margin-top: 0.5rem;
   background-color: #eee;
 }
@@ -188,12 +182,13 @@ export default {
 .row {
   display: flex;
   flex-flow: row nowrap;
-  padding: 1rem;
+  padding: 0.5rem 0.75rem;
   align-items: center;
 }
 
 .label {
   flex: 1;
+  font-weight: 600;
 }
 
 .input {
@@ -223,7 +218,7 @@ select.input {
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'%3E%3Cpath fill='%23777' d='M20.7 26.5c.7.8 1.9.8 2.6 0l6.4-7c.7-.8.4-1.5-.7-1.5H15c-1.1 0-1.4.7-.7 1.5l6.4 7z'/%3E%3C/svg%3E");
   background-position: center right;
-  background-size: auto 2rem;
+  background-size: auto 1.5rem;
   background-repeat: no-repeat;
 }
 
