@@ -2,7 +2,14 @@
   <div class="container" @click="discard">
     <form class="nodeSettings" @click="event => event.stopPropagation()" @submit="save">
       <div class="nodeSettings__header">
-        <Node :icon="icon" :smart="smart" :extension="extension" :note="note" />
+        <Node
+          :icon="icon"
+          :smart="smart"
+          :extension="extension"
+          :note="note"
+          :class="{smart}"
+          :style="{backgroundColor: background}"
+        />
         <span class="nodeSettings__title">{{ title }}</span>
       </div>
       <div class="row">
@@ -39,6 +46,20 @@
         <label class="label" for="settings_note">Note</label>
         <input class="input" id="settings_note" autocomplete="off" v-model="note" />
       </div>
+      <div class="row">
+        <label class="label" for="settings_background">Background</label>
+        <div class="inputs">
+          <button
+            v-for="(color, index) in colors"
+            v-bind:key="color"
+            class="color"
+            type="button"
+            :class="{transparent: color === 'transparent', active: background === color || (!background && !index)}"
+            :style="{backgroundColor: color}"
+            @click="() => setBackground(color)"
+          ></button>
+        </div>
+      </div>
       <div class="nodeSettings__footer">
         <button class="button" type="button" @click="discard">Cancel</button>
         <button class="button button--primary" type="submit">Save</button>
@@ -70,11 +91,20 @@ export default {
     node: Object
   },
   data() {
-    const { note = '' } = this.node;
+    const { note = '', background = null } = this.node;
     return {
       ...this.node,
       note,
-      icons: ICONS
+      background,
+      icons: ICONS,
+      colors: [
+        '#ddd',
+        '#fddfdf',
+        '#fcf7de',
+        '#defde0',
+        '#def3fd',
+        'transparent'
+      ]
     };
   },
   methods: {
@@ -86,15 +116,20 @@ export default {
     },
     save(event) {
       event.preventDefault();
-      const { title, icon, smart, extension, note } = this;
+      const { title, icon, smart, extension, note, background } = this;
+      const isDefaultBg = !background || this.colors[0] === background;
       this.$emit('save', {
         ...this.node,
         title,
         icon,
         smart,
         extension,
-        note: note ? note : undefined
+        note: note ? note : undefined,
+        background: isDefaultBg ? undefined : background
       });
+    },
+    setBackground(color) {
+      this.background = color;
     }
   },
   components: {
@@ -171,12 +206,19 @@ export default {
 }
 
 .nodeSettings__title:empty {
-  margin-left: -0.5rem;
+  margin-left: -0.75rem;
 }
 
 .node {
   position: relative;
-  margin-right: 0.5rem;
+  margin-right: 0.75rem;
+  background: #ddd;
+  border: 2px solid #4b413f;
+  border-radius: 50%;
+}
+
+.node.smart {
+  border-color: #004e85;
 }
 
 .row {
@@ -189,6 +231,13 @@ export default {
 .label {
   flex: 1;
   font-weight: 600;
+}
+
+.inputs {
+  display: flex;
+  flex-flow: row nowrap;
+  flex: 2;
+  margin-left: calc(-0.5rem - 2px);
 }
 
 .input {
@@ -227,6 +276,36 @@ select.input {
   cursor: not-allowed;
 }
 
+.color {
+  position: relative;
+  flex: 1;
+  height: 2rem;
+  max-width: 2rem;
+  border: 2px solid #bbb;
+  border-radius: 4px;
+  padding: 0.5rem;
+  margin: 0;
+  background-color: transparent;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: border-color 0.3s;
+}
+
+.color.active,
+.color:focus {
+  border-color: #004e85;
+  outline: none;
+}
+
+.color.transparent {
+  background: url('data:image/gif;base64,R0lGODdhEAAQAPAAAJSUlLe3tywAAAAAEAAQAAACH4xvoKuIzNyBSyYKbMDZcv15HAaSIlWiJ5Sya/RWVgEAOw==')
+    center center repeat;
+}
+
+.color + .color {
+  margin-left: 0.5rem;
+}
+
 .button {
   display: block;
   padding: 0.5rem 1rem;
@@ -240,6 +319,7 @@ select.input {
   cursor: pointer;
   transition: background-color 0.3s;
 }
+
 .button:hover {
   background-color: #444;
 }

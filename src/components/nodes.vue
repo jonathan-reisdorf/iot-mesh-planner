@@ -19,6 +19,7 @@
       :smart="node.smart"
       :extension="node.extension"
       :note="node.note"
+      :background="node.background"
       :style="getNodeStyle(node)"
       v-touch:start="event => setActiveKey(node.key, event)"
       v-touch:end="event => showNodeSettings(node.key, event)"

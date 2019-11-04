@@ -1,5 +1,5 @@
 <template>
-  <div class="node" :title="title" @click="$emit('click')">
+  <div class="node" :title="title" @click="$emit('click')" :style="{backgroundColor: background}">
     <DoorWindowSensor v-if="icon === 'door_window_sensor'" :class="iconClass" />
     <EthernetSocket v-if="icon === 'ethernet_socket'" :class="iconClass" />
     <EthernetSwitch v-if="icon === 'ethernet_switch'" :class="iconClass" />
@@ -37,7 +37,8 @@ export default {
     icon: String,
     smart: Boolean | String,
     extension: Boolean,
-    note: String
+    note: String,
+    background: String
   },
   computed: {
     iconClass() {
