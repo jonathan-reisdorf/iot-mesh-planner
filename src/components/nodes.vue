@@ -21,7 +21,7 @@
       :note="node.note"
       :style="getNodeStyle(node)"
       v-touch:start="event => setActiveKey(node.key, event)"
-      v-touch:end="event => showNodeSettings(node, event)"
+      v-touch:end="event => showNodeSettings(node.key, event)"
     />
     <Lines
       :getContainerEl="getContainerEl"
@@ -149,12 +149,17 @@ export default {
         NODES_START_MOVING_TIMEOUT
       );
     },
-    showNodeSettings(node, event = null) {
-      if (node.key === this.activeKey) {
+    showNodeSettings(key, event = null) {
+      if (key === this.activeKey) {
         return;
       }
 
-      this.$emit('showNodeSettings', node);
+      const target = this.nodes.find(node => node.key === key);
+      if (!target) {
+        return;
+      }
+
+      this.$emit('showNodeSettings', target);
     }
   },
   components: {
