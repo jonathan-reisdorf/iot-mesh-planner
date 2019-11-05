@@ -227,15 +227,15 @@ export default {
   z-index: -1;
 }
 .crosshair::before {
-  left: calc(-2rem - 0.5vw);
-  right: calc(-2rem - 0.5vw);
+  left: -100vw;
+  right: -100vw;
   top: 0;
   margin-top: -1px;
   height: 2px;
 }
 .crosshair::after {
-  top: calc(-2rem - 0.5vw);
-  bottom: calc(-2rem - 0.5vw);
+  top: -100vh;
+  bottom: -100vh;
   left: 0;
   margin-left: -1px;
   width: 2px;
