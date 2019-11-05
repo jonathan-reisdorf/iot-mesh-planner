@@ -4,7 +4,6 @@
       v-if="tmpNode && tmpX !== null && tmpY !== null"
       class="tmp"
       :class="{smart: tmpNode.smart}"
-      :title="tmpNode.title"
       :icon="tmpNode.icon"
       :smart="tmpNode.smart"
       :extension="tmpNode.extension"
@@ -14,7 +13,7 @@
       v-for="node in nodes"
       v-bind:key="node.key"
       :class="{smart: node.smart, tmp: node.key === activeKey}"
-      :title="node.title"
+      :title="node.key !== activeKey ? node.title : undefined"
       :icon="node.icon"
       :smart="node.smart"
       :extension="node.extension"
@@ -23,6 +22,11 @@
       :style="getNodeStyle(node)"
       v-touch:start="event => setActiveKey(node.key, event)"
       v-touch:end="event => showNodeSettings(node.key, event)"
+    />
+    <div
+      class="crosshair"
+      v-if="(tmpNode || activeKey) && tmpX !== null && tmpY !== null"
+      :style="{left: tmpX + '%', top: tmpY + '%' }"
     />
     <Lines
       :getContainerEl="getContainerEl"
@@ -206,6 +210,34 @@ export default {
 .node.tmp {
   cursor: none;
   opacity: 1;
+  z-index: 3;
+}
+
+.crosshair {
+  position: absolute;
   z-index: 2;
+  mix-blend-mode: difference;
+}
+.crosshair::before,
+.crosshair::after {
+  display: block;
+  content: '';
+  position: absolute;
+  background: #fff;
+  z-index: -1;
+}
+.crosshair::before {
+  left: calc(-2rem - 0.5vw);
+  right: calc(-2rem - 0.5vw);
+  top: 0;
+  margin-top: -1px;
+  height: 2px;
+}
+.crosshair::after {
+  top: calc(-2rem - 0.5vw);
+  bottom: calc(-2rem - 0.5vw);
+  left: 0;
+  margin-left: -1px;
+  width: 2px;
 }
 </style>
