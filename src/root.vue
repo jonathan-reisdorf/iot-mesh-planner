@@ -22,6 +22,7 @@
         </div>
       </Zoom>
     </Offset>
+    <Navigation v-if="plan && isPlanLoaded" @navigate="navigate" />
     <NodePicker v-if="plan && isPlanLoaded" @picked="onNodePicked" :tmpNode="tmpNode" />
     <PlanManager v-if="!plan || isPlanManagerOpened" @selectedPlan="setPlan" />
     <NodeSettings
@@ -34,6 +35,7 @@
 </template>
 
 <script>
+import Navigation from './components/navigation.vue';
 import NodePicker from './components/node-picker.vue';
 import Nodes from './components/nodes.vue';
 import NodeSettings from './components/node-settings.vue';
@@ -52,6 +54,9 @@ export default {
       tmpNode: null,
       settingsNode: null
     };
+  },
+  created() {
+    this._originalData = { ...this._data };
   },
   methods: {
     onNodePicked(node) {
@@ -92,9 +97,22 @@ export default {
       this.settingsNode = null;
       Object.assign(target, node);
       this.onNodes(this.nodes);
+    },
+    reset() {
+      Object.assign(this, this._originalData);
+    },
+    navigate(target) {
+      switch (target) {
+        case 'plans':
+          this.reset();
+          break;
+        case 'download':
+          alert('TODO');
+      }
     }
   },
   components: {
+    Navigation,
     NodePicker,
     Nodes,
     NodeSettings,
@@ -140,8 +158,8 @@ body {
   display: block;
   width: auto;
   height: auto;
-  max-width: calc(100vw - 4rem);
-  max-height: calc(100vh - 4rem);
+  max-width: calc(96vw - 6rem);
+  max-height: calc(100vh - 4vw - 6rem);
 }
 
 .icon {
