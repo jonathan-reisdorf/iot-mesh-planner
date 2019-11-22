@@ -19,6 +19,13 @@
             @nodes="onNodes"
             @showNodeSettings="showNodeSettings"
           />
+          <ImageExport
+            v-if="isPlanLoaded && renderImageExport"
+            :getContainerEl="() => $refs.containerEl"
+            :nodes="nodes"
+            :background="plan.image"
+            @finished="renderImageExport = false"
+          />
         </div>
       </Zoom>
     </Offset>
@@ -35,6 +42,7 @@
 </template>
 
 <script>
+import ImageExport from './components/image-export.vue';
 import Navigation from './components/navigation.vue';
 import NodePicker from './components/node-picker.vue';
 import Nodes from './components/nodes.vue';
@@ -50,6 +58,7 @@ export default {
       isShiftingPlan: false,
       isPlanLoaded: false,
       isPlanManagerOpened: true,
+      renderImageExport: false,
       nodes: [],
       tmpNode: null,
       settingsNode: null
@@ -107,11 +116,13 @@ export default {
           this.reset();
           break;
         case 'download':
-          alert('TODO');
+          this.renderImageExport = true;
+          break;
       }
     }
   },
   components: {
+    ImageExport,
     Navigation,
     NodePicker,
     Nodes,
