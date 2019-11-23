@@ -68,10 +68,12 @@ export default {
 <style scoped>
 .node {
   flex: none;
-  padding: 0.5vw;
+  padding: 6px;
 }
 
 .icon {
+  width: 32px;
+  height: 32px;
   fill: #4b413f;
 }
 
@@ -82,10 +84,10 @@ export default {
 .icon.extension {
   display: block;
   position: absolute;
-  right: 0.25rem;
-  top: 0.25rem;
-  width: 1.25rem;
-  height: 1.25rem;
+  right: -2px;
+  top: -2px;
+  width: 22px;
+  height: 22px;
   z-index: 1;
   background: #fff;
   border-radius: 50%;
@@ -95,13 +97,18 @@ export default {
   display: block;
   position: absolute;
   left: 50%;
-  top: -0.25rem;
-  width: 1rem;
-  height: 1rem;
-  margin-left: -0.5rem;
+  top: -4px;
+  width: 16px;
+  height: 16px;
+  margin-left: -8px;
   fill: #e8a87c;
   stroke: #fff;
-  stroke-width: 0.3rem;
+  stroke-width: 8px;
   z-index: 1;
+}
+
+.node-picker__node .icon.icon.extension {
+  right: 6px;
+  top: 6px;
 }
 </style>

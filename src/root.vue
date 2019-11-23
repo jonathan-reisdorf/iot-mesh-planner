@@ -169,8 +169,8 @@ body {
   display: block;
   width: auto;
   height: auto;
-  max-width: calc(96vw - 6rem);
-  max-height: calc(100vh - 4vw - 6rem);
+  max-width: calc(95vw - 6rem - 48px); /* 4rem + 2rem */
+  max-height: calc(100vh - 2vw - 112px - 2rem); /* 64px + 48px */
 }
 
 .icon {

@@ -191,8 +191,8 @@ export default {
   border: 2px solid #4b413f;
   width: auto;
   height: auto;
-  margin-left: calc(-2px - 1rem - 0.5vw);
-  margin-top: calc(-2px - 1rem - 0.5vw);
+  margin-left: -24px; /* -(1/2 icon width + padding + border) */
+  margin-top: -24px;
   will-change: left, top, opacity;
   transition: opacity 0.3s;
   z-index: 0;
