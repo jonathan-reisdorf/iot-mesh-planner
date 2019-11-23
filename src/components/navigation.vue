@@ -12,9 +12,25 @@
       type="button"
       class="navigation__item"
       title="Download as image"
-      @click="event => navigate(event, 'download')"
+      @click="event => navigate(event, 'downloadImage')"
     >
       <DownloadImageIcon />
+    </button>
+    <button
+      type="button"
+      class="navigation__item"
+      title="Download config (nodes and settings)"
+      @click="event => navigate(event, 'downloadConfig')"
+    >
+      <DownloadSettingsIcon />
+    </button>
+    <button
+      type="button"
+      class="navigation__item"
+      title="Upload config (nodes and settings)"
+      @click="event => navigate(event, 'uploadConfig')"
+    >
+      <UploadSettingsIcon />
     </button>
   </nav>
 </template>
@@ -22,6 +38,8 @@
 <script>
 import StoriesIcon from '../icons/stories.vue';
 import DownloadImageIcon from '../icons/download-image.vue';
+import DownloadSettingsIcon from '../icons/settings-download.vue';
+import UploadSettingsIcon from '../icons/settings-upload.vue';
 
 export default {
   methods: {
@@ -32,7 +50,9 @@ export default {
   },
   components: {
     StoriesIcon,
-    DownloadImageIcon
+    DownloadImageIcon,
+    DownloadSettingsIcon,
+    UploadSettingsIcon
   }
 };
 </script>

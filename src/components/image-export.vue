@@ -22,7 +22,7 @@
 import Lines, { DRAW_LEVELS } from './lines.vue';
 
 export default {
-  props: ['getContainerEl', 'nodes', 'background', 'zoom'],
+  props: ['getContainerEl', 'nodes', 'background', 'zoom', 'planName'],
   mounted() {
     const { imageExportContainerEl } = this.$refs;
     this.containerEl = imageExportContainerEl;
@@ -54,7 +54,7 @@ export default {
     onRendered() {
       const canvas = this.$refs.imageExportContainerEl.querySelector('canvas');
       const link = document.createElement('a');
-      link.setAttribute('download', 'iot-mesh-planner-export.png');
+      link.setAttribute('download', `${this.planName}.image-export.png`);
       link.setAttribute(
         'href',
         canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream')

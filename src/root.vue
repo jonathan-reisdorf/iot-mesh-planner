@@ -26,6 +26,7 @@
             :nodes="nodes"
             :background="plan.image"
             :zoom="zoom"
+            :planName="planName"
             @finished="renderImageExport = false"
           />
         </div>
@@ -57,6 +58,7 @@ export default {
   data() {
     return {
       plan: null,
+      planName: 'plan',
       isShiftingPlan: false,
       isPlanLoaded: false,
       isPlanManagerOpened: true,
@@ -95,6 +97,7 @@ export default {
       this.nodes = JSON.parse(
         localStorage.getItem(`nodes_${plan.fileName}`) || '[]'
       );
+      this.planName = plan.fileName.split('.').shift() || 'plan';
       this.plan = plan;
     },
     showNodeSettings(node) {
@@ -113,6 +116,17 @@ export default {
       Object.assign(target, node);
       this.onNodes(this.nodes);
     },
+    downloadConfig() {
+      const config = { nodes: this.nodes };
+      const json = JSON.stringify(config, null, 2);
+      const link = document.createElement('a');
+      link.setAttribute('download', `${this.planName}.config.json`);
+      link.setAttribute(
+        'href',
+        `data:text/json;charset=utf-8,${encodeURIComponent(json)}`
+      );
+      link.click();
+    },
     reset() {
       Object.assign(this, this._originalData);
     },
@@ -121,8 +135,14 @@ export default {
         case 'plans':
           this.reset();
           break;
-        case 'download':
+        case 'downloadImage':
           this.renderImageExport = true;
+          break;
+        case 'downloadConfig':
+          this.downloadConfig();
+          break;
+        case 'uploadConfig':
+          alert('Sorry, not implemented, yet');
           break;
       }
     }
