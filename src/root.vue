@@ -40,6 +40,7 @@
       :node="settingsNode"
       @discard="discardNodeSettings"
       @save="saveNodeSettings"
+      @removeNode="removeNode"
     />
   </main>
 </template>
@@ -115,6 +116,10 @@ export default {
       this.settingsNode = null;
       Object.assign(target, node);
       this.onNodes(this.nodes);
+    },
+    removeNode(keyToRemove) {
+      this.discardNodeSettings();
+      this.onNodes(this.nodes.filter(({ key }) => key !== keyToRemove));
     },
     downloadConfig() {
       const config = { nodes: this.nodes };

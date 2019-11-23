@@ -62,6 +62,7 @@
       </div>
       <div class="nodeSettings__footer">
         <button class="button" type="button" @click="discard">Cancel</button>
+        <button class="button button--negative" type="button" @click="remove">Delete</button>
         <button class="button button--primary" type="submit">Save</button>
       </div>
     </form>
@@ -113,6 +114,9 @@ export default {
     },
     discard() {
       this.$emit('discard');
+    },
+    remove() {
+      this.$emit('removeNode', this.key);
     },
     save(event) {
       event.preventDefault();
@@ -192,7 +196,6 @@ export default {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  justify-content: space-between;
   padding: 0.5rem 0.75rem;
   margin-top: 0.5rem;
   background-color: #eee;
@@ -309,6 +312,7 @@ select.input {
 .button {
   display: block;
   padding: 0.5rem 1rem;
+  margin-right: 0.5rem;
   background: #777;
   color: #fff;
   font-size: inherit;
@@ -320,15 +324,28 @@ select.input {
   transition: background-color 0.3s;
 }
 
-.button:hover {
+.button:hover,
+.button:focus {
   background-color: #444;
 }
 
 .button--primary {
+  margin-left: auto;
+  margin-right: 0;
   background-color: #004e85;
 }
 
-.button--primary:hover {
+.button--primary:hover,
+.button--primary:focus {
   background-color: #003153;
+}
+
+.button--negative {
+  background-color: #bb2a29;
+}
+
+.button--negative:hover,
+.button--negative:focus {
+  background-color: #922b2b;
 }
 </style>
