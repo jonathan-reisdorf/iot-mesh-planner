@@ -1,7 +1,7 @@
 <template>
   <main id="root">
     <Offset v-if="plan" @startShift="isShiftingPlan = true" @endShift="isShiftingPlan = false">
-      <Zoom>
+      <Zoom @toggled="this.onZoomToggled">
         <div class="container" ref="containerEl">
           <img
             class="plan"
@@ -16,6 +16,7 @@
             :getContainerEl="() => $refs.containerEl"
             :isShiftingPlan="isShiftingPlan"
             :nodes="nodes"
+            :zoom="zoom"
             @nodes="onNodes"
             @showNodeSettings="showNodeSettings"
           />
@@ -24,6 +25,7 @@
             :getContainerEl="() => $refs.containerEl"
             :nodes="nodes"
             :background="plan.image"
+            :zoom="zoom"
             @finished="renderImageExport = false"
           />
         </div>
@@ -61,7 +63,8 @@ export default {
       renderImageExport: false,
       nodes: [],
       tmpNode: null,
-      settingsNode: null
+      settingsNode: null,
+      zoom: 1
     };
   },
   created() {
@@ -83,6 +86,9 @@ export default {
     },
     onPlanLoaded() {
       this.isPlanLoaded = true;
+    },
+    onZoomToggled(zoom) {
+      this.zoom = zoom;
     },
     setPlan(plan) {
       this.isPlanManagerOpened = false;

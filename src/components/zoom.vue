@@ -1,10 +1,5 @@
 <template>
-  <div
-    class="zoom"
-    :class="'zoom--level' + zoom"
-    :style="{transform: `scale(${zoom})`}"
-    @dblclick="toggleZoom"
-  >
+  <div class="zoom" :style="{transform: `scale(${zoom})`}" @dblclick="toggleZoom">
     <slot />
   </div>
 </template>
@@ -19,12 +14,13 @@ export default {
   methods: {
     toggleZoom() {
       this.zoom = this.zoom === 1 ? 2 : 1;
+      this.$emit('toggled', this.zoom);
     }
   }
 };
 </script>
 
-<style>
+<style scoped>
 .zoom {
   display: flex;
   flex-flow: row nowrap;
@@ -37,10 +33,5 @@ export default {
   transition: transform 0.3s;
   will-change: transform;
   z-index: 0;
-}
-
-.zoom--level2 .nodes .node,
-.zoom--level2 .imageExport {
-  transform: scale(0.5);
 }
 </style>

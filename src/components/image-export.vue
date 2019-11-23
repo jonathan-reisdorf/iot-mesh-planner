@@ -1,5 +1,10 @@
 <template>
-  <div class="imageExport" :style="{width, height}" ref="imageExportContainerEl">
+  <div
+    class="imageExport"
+    :class="{'imageExport--zoomed': zoom !== 1}"
+    :style="{width, height}"
+    ref="imageExportContainerEl"
+  >
     <Lines
       v-if="containerEl"
       :getContainerEl="() => containerEl"
@@ -17,7 +22,7 @@
 import Lines, { DRAW_LEVELS } from './lines.vue';
 
 export default {
-  props: ['getContainerEl', 'nodes', 'background'],
+  props: ['getContainerEl', 'nodes', 'background', 'zoom'],
   mounted() {
     const { imageExportContainerEl } = this.$refs;
     this.containerEl = imageExportContainerEl;
@@ -71,5 +76,8 @@ export default {
   top: 0;
   visibility: hidden;
   pointer-events: none;
+}
+.imageExport--zoomed {
+  transform: scale(0.5);
 }
 </style>

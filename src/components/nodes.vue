@@ -1,5 +1,11 @@
 <template>
-  <div class="nodes" @mousemove="shift" v-touch:moving="shift" v-touch:end="place">
+  <div
+    class="nodes"
+    :class="{'nodes--zoomed': zoom !== 1}"
+    @mousemove="shift"
+    v-touch:moving="shift"
+    v-touch:end="place"
+  >
     <Node
       v-if="tmpNode && tmpX !== null && tmpY !== null"
       class="tmp"
@@ -33,6 +39,7 @@
       :nodes="nodes"
       :tmpNode="tmpNode"
       :movingNode="movingNode"
+      :zoom="zoom"
     />
   </div>
 </template>
@@ -44,7 +51,7 @@ import Lines from './lines.vue';
 import { NODES_START_MOVING_TIMEOUT } from '../config';
 
 export default {
-  props: ['getContainerEl', 'nodes', 'isShiftingPlan', 'tmpNode'],
+  props: ['getContainerEl', 'nodes', 'isShiftingPlan', 'tmpNode', 'zoom'],
   data() {
     return {
       containerEl: null,
@@ -183,6 +190,10 @@ export default {
   height: 100%;
 }
 
+.nodes--zoomed .node {
+  transform: scale(0.5);
+}
+
 .node {
   position: absolute;
   cursor: pointer;
@@ -193,8 +204,8 @@ export default {
   height: auto;
   margin-left: -24px; /* -(1/2 icon width + padding + border) */
   margin-top: -24px;
-  will-change: left, top, opacity;
-  transition: opacity 0.3s;
+  will-change: left, top, opacity, transform;
+  transition: opacity 0.3s, transform 0.3s ease-in-out 0.4s;
   z-index: 0;
 }
 

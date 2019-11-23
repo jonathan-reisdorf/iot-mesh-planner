@@ -53,7 +53,8 @@ export default {
     'tmpNode',
     'movingNode',
     'drawLevel',
-    'background'
+    'background',
+    'zoom'
   ],
   data() {
     const containerEl = this.getContainerEl();
@@ -107,6 +108,9 @@ export default {
         .filter(k => k.split(':').includes(String(key)))
         .forEach(k => delete this.cachedDistances[k]);
       this.draw(false);
+    },
+    zoom() {
+      setTimeout(() => this.onCanvasResize(), 400); // wait for 300ms zoom transition
     }
   },
   methods: Object.assign(
