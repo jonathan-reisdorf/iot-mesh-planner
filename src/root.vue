@@ -169,13 +169,21 @@ body {
   display: block;
   width: auto;
   height: auto;
-  max-width: calc(95vw - 6rem - 48px); /* 4rem + 2rem */
-  max-height: calc(100vh - 2vw - 112px - 2rem); /* 64px + 48px */
+  max-width: calc(95vw - 6rem - 48px);
+  min-width: 800px;
 }
 
 .icon {
   display: block;
   width: 2rem;
   height: 2rem;
+}
+
+@media screen and (min-width: 1000px) {
+  .plan {
+    min-width: 0;
+    max-width: calc(95vw - 6rem - 48px); /* 4rem + 2rem */
+    max-height: calc(100vh - 2vw - 112px - 2rem); /* 64px + 48px */
+  }
 }
 </style>
