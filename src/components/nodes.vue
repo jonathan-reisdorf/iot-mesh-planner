@@ -17,7 +17,7 @@
     />
     <Node
       v-for="node in nodes"
-      v-bind:key="node.key"
+      :key="node.key"
       :class="{smart: node.smart, tmp: node.key === activeKey}"
       :title="node.key !== activeKey ? node.title : undefined"
       :icon="node.icon"

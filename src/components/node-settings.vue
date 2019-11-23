@@ -19,11 +19,7 @@
       <div class="row">
         <label class="label" for="settings_icon">Icon</label>
         <select class="input" id="settings_icon" v-model="icon">
-          <option
-            v-for="(iconName, iconKey) in icons"
-            v-bind:key="iconKey"
-            :value="iconKey"
-          >{{iconName}}</option>
+          <option v-for="(iconName, iconKey) in icons" :key="iconKey" :value="iconKey">{{iconName}}</option>
         </select>
       </div>
       <div class="row">
@@ -51,7 +47,7 @@
         <div class="inputs">
           <button
             v-for="(color, index) in colors"
-            v-bind:key="color"
+            :key="color"
             class="color"
             type="button"
             :class="{transparent: color === 'transparent', active: background === color || (!background && !index)}"
@@ -282,45 +278,5 @@ select.input {
 
 .color + .color {
   margin-left: 0.5rem;
-}
-
-.button {
-  display: block;
-  padding: 0.5rem 1rem;
-  margin-right: 0.5rem;
-  background: #777;
-  color: #fff;
-  font-size: inherit;
-  font-family: inherit;
-  font-weight: inherit;
-  border: 0 none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.button:hover,
-.button:focus {
-  background-color: #444;
-}
-
-.button--primary {
-  margin-left: auto;
-  margin-right: 0;
-  background-color: #004e85;
-}
-
-.button--primary:hover,
-.button--primary:focus {
-  background-color: #003153;
-}
-
-.button--negative {
-  background-color: #bb2a29;
-}
-
-.button--negative:hover,
-.button--negative:focus {
-  background-color: #922b2b;
 }
 </style>

@@ -4,7 +4,7 @@
       type="button"
       class="navigation__item"
       title="Plans"
-      @click="event => navigate(event, 'plans')"
+      @click="event => navigate('plans', event)"
     >
       <StoriesIcon />
     </button>
@@ -12,24 +12,31 @@
       type="button"
       class="navigation__item"
       title="Download as image"
-      @click="event => navigate(event, 'downloadImage')"
+      @click="event => navigate('downloadImage', event)"
     >
       <DownloadImageIcon />
     </button>
     <button
       type="button"
       class="navigation__item"
-      title="Download config (nodes and settings)"
-      @click="event => navigate(event, 'downloadConfig')"
+      title="Export config (nodes and settings)"
+      @click="event => navigate('exportConfig', event)"
     >
       <DownloadSettingsIcon />
     </button>
     <button
       type="button"
       class="navigation__item"
-      title="Upload config (nodes and settings)"
-      @click="event => navigate(event, 'uploadConfig')"
+      title="Import config (nodes and settings)"
+      @click="initiateConfigImport"
     >
+      <input
+        class="navigation__fileInput"
+        type="file"
+        ref="importConfigInput"
+        accept="application/json"
+        @change="importConfig"
+      />
       <UploadSettingsIcon />
     </button>
   </nav>
@@ -43,9 +50,17 @@ import UploadSettingsIcon from '../icons/settings-upload.vue';
 
 export default {
   methods: {
-    navigate(event, target) {
+    navigate(target, event = null, arg = null) {
+      event && event.currentTarget.blur();
+      this.$emit('navigate', target, arg);
+    },
+    initiateConfigImport(event) {
       event.currentTarget.blur();
-      this.$emit('navigate', target);
+      this.$refs.importConfigInput.click();
+    },
+    importConfig({ target, target: { files = [] } }) {
+      this.navigate('importConfig', null, [...files].shift());
+      target.value = null;
     }
   },
   components: {
@@ -88,5 +103,9 @@ export default {
 .navigation__item:focus,
 .navigation__item:active {
   fill: #004e85;
+}
+
+.navigation__fileInput {
+  display: none;
 }
 </style>

@@ -20,21 +20,20 @@
             @nodes="onNodes"
             @showNodeSettings="showNodeSettings"
           />
-          <ImageExport
-            v-if="isPlanLoaded && renderImageExport"
-            :getContainerEl="() => $refs.containerEl"
-            :nodes="nodes"
-            :background="plan.image"
-            :zoom="zoom"
-            :planName="planName"
-            @finished="renderImageExport = false"
-          />
         </div>
       </Zoom>
     </Offset>
     <Navigation v-if="plan && isPlanLoaded" @navigate="navigate" />
     <NodePicker v-if="plan && isPlanLoaded" @picked="onNodePicked" :tmpNode="tmpNode" />
     <PlanManager v-if="!plan || isPlanManagerOpened" @selectedPlan="setPlan" />
+    <ImageExport
+      v-if="isPlanLoaded && renderImageExport"
+      :getContainerEl="() => $refs.containerEl"
+      :nodes="nodes"
+      :background="plan.image"
+      :planName="planName"
+      @finished="renderImageExport = false"
+    />
     <NodeSettings
       v-if="settingsNode"
       :node="settingsNode"
@@ -42,10 +41,20 @@
       @save="saveNodeSettings"
       @removeNode="removeNode"
     />
+    <ConfigImportPreview
+      v-if="configToImport"
+      :nodes="nodes"
+      :config="configToImport"
+      :getContainerEl="() => $refs.containerEl"
+      :background="plan.image"
+      @discard="discardConfigImport"
+      @proceed="importConfig"
+    />
   </main>
 </template>
 
 <script>
+import ConfigImportPreview from './components/config-import-preview.vue';
 import ImageExport from './components/image-export.vue';
 import Navigation from './components/navigation.vue';
 import NodePicker from './components/node-picker.vue';
@@ -54,6 +63,8 @@ import NodeSettings from './components/node-settings.vue';
 import Offset from './components/offset.vue';
 import PlanManager from './components/plan-manager.vue';
 import Zoom from './components/zoom.vue';
+
+import { APPLICATION_VERSION } from './config';
 
 export default {
   data() {
@@ -67,6 +78,7 @@ export default {
       nodes: [],
       tmpNode: null,
       settingsNode: null,
+      configToImport: null,
       zoom: 1
     };
   },
@@ -121,8 +133,12 @@ export default {
       this.discardNodeSettings();
       this.onNodes(this.nodes.filter(({ key }) => key !== keyToRemove));
     },
-    downloadConfig() {
-      const config = { nodes: this.nodes };
+    exportConfig() {
+      const config = {
+        nodes: this.nodes,
+        applicationVersion: APPLICATION_VERSION,
+        date: new Date().toUTCString()
+      };
       const json = JSON.stringify(config, null, 2);
       const link = document.createElement('a');
       link.setAttribute('download', `${this.planName}.config.json`);
@@ -132,10 +148,33 @@ export default {
       );
       link.click();
     },
+    discardConfigImport() {
+      this.configToImport = null;
+    },
+    importConfig() {
+      this.onNodes(this.configToImport.nodes || []);
+      this.configToImport = null;
+    },
+    showConfigImportPreview(file) {
+      if (!file || file.type !== 'application/json') {
+        file && alert('Only json files are supported!');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = ({ target: { result } }) => {
+        try {
+          this.configToImport = JSON.parse(result);
+        } catch (e) {
+          alert('Error reading the config file');
+        }
+      };
+      reader.readAsText(file);
+    },
     reset() {
       Object.assign(this, this._originalData);
     },
-    navigate(target) {
+    navigate(target, arg = null) {
       switch (target) {
         case 'plans':
           this.reset();
@@ -143,16 +182,17 @@ export default {
         case 'downloadImage':
           this.renderImageExport = true;
           break;
-        case 'downloadConfig':
-          this.downloadConfig();
+        case 'exportConfig':
+          this.exportConfig();
           break;
-        case 'uploadConfig':
-          alert('Sorry, not implemented, yet');
+        case 'importConfig':
+          this.showConfigImportPreview(arg);
           break;
       }
     }
   },
   components: {
+    ConfigImportPreview,
     ImageExport,
     Navigation,
     NodePicker,
@@ -208,6 +248,46 @@ body {
   display: block;
   width: 2rem;
   height: 2rem;
+}
+
+.button {
+  display: block;
+  padding: 0.5rem 1rem;
+  margin-right: 0.5rem;
+  background: #777;
+  color: #fff;
+  font-size: inherit;
+  font-family: inherit;
+  font-weight: inherit;
+  border: 0 none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.button:hover,
+.button:focus {
+  background-color: #444;
+}
+
+.button--primary {
+  margin-left: auto;
+  margin-right: 0;
+  background-color: #004e85;
+}
+
+.button--primary:hover,
+.button--primary:focus {
+  background-color: #003153;
+}
+
+.button--negative {
+  background-color: #bb2a29;
+}
+
+.button--negative:hover,
+.button--negative:focus {
+  background-color: #922b2b;
 }
 
 @media screen and (min-width: 1000px) {

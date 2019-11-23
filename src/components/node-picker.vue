@@ -4,7 +4,7 @@
       v-for="node in nodes"
       class="node-picker__node"
       :class="{'active': tmpNode && tmpNode.type === node.type}"
-      v-bind:key="node.type"
+      :key="node.type"
       :title="node.title"
       :icon="node.icon"
       :smart="node.smart"

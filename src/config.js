@@ -1,3 +1,5 @@
+export const APPLICATION_VERSION = '1.0.0';
+
 export const ICONS = {
   door_window_sensor: 'Door / Window Sensor',
   ethernet_socket: 'Ethernet Socket',
@@ -109,7 +111,7 @@ export const NODES = [
     title: 'Smart Smoke Detector',
     icon: 'smoke_detector',
     smart: 'passive',
-    extension: true
+    extension: false
   },
   {
     type: 'generic',

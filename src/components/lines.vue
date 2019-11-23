@@ -72,17 +72,20 @@ export default {
       renderedLines: [],
       offset: this.drawLevel > DRAW_LEVELS.lines ? 30 : 0,
       renderNodeList: this.drawLevel > DRAW_LEVELS.lines,
+      addResizeListener: this.drawLevel === DRAW_LEVELS.lines,
       ...this.getDevices()
     };
   },
   mounted() {
-    window.addEventListener('resize', this.onCanvasResize);
+    this.addResizeListener &&
+      window.addEventListener('resize', this.onCanvasResize);
     const { canvas } = this.$refs;
     this.ctx = canvas.getContext('2d');
     this.draw();
   },
   beforeDestroy() {
-    window.removeEventListener('resize', this.onCanvasResize);
+    this.addResizeListener &&
+      window.removeEventListener('resize', this.onCanvasResize);
   },
   watch: {
     nodes() {
@@ -133,7 +136,6 @@ export default {
       },
       onCanvasResize() {
         const { width, height } = this.containerEl.getBoundingClientRect();
-        const { canvas } = this.$refs;
         this.ratio = height / width;
         this.width = width;
         this.height = height;

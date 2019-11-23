@@ -15,7 +15,13 @@
         <div class="planManager__hint">(image, ideally high-resolution)</div>
       </div>
     </div>
-    <input class="planManager__input" type="file" ref="fileInput" @change="uploadPlan" />
+    <input
+      class="planManager__fileInput"
+      type="file"
+      ref="fileInput"
+      @change="uploadPlan"
+      accept="image/*"
+    />
 
     <div class="planManager__container" v-if="plans.length">
       <div class="planManager__plans">
@@ -245,7 +251,7 @@ export default {
   color: #777;
 }
 
-.planManager__input {
+.planManager__fileInput {
   display: none;
 }
 
