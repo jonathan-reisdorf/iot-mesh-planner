@@ -43,19 +43,43 @@
       />
       <UploadSettingsIcon />
     </button>
+    <button
+      v-if="show.toggleZoom"
+      :class="{active: zoom !== 1}"
+      type="button"
+      class="navigation__item"
+      title="Toggle zoom"
+      @click="event => navigate('toggleZoom', event)"
+    >
+      <ZoomIcon />
+    </button>
+    <button
+      v-if="show.toggleLines"
+      :class="{active: showLines}"
+      type="button"
+      class="navigation__item"
+      title="Toggle lines"
+      @click="event => navigate('toggleLines', event)"
+    >
+      <NodesIcon />
+    </button>
   </nav>
 </template>
 
 <script>
-import StoriesIcon from '../icons/stories.vue';
 import DownloadImageIcon from '../icons/download-image.vue';
 import DownloadSettingsIcon from '../icons/settings-download.vue';
+import NodesIcon from '../icons/nodes.vue';
+import StoriesIcon from '../icons/stories.vue';
 import UploadSettingsIcon from '../icons/settings-upload.vue';
+import ZoomIcon from '../icons/zoom.vue';
 
 export default {
   props: {
+    alignment: String,
     items: Array,
-    alignment: String
+    showLines: Boolean,
+    zoom: Number
   },
   data() {
     return {
@@ -80,10 +104,12 @@ export default {
     }
   },
   components: {
-    StoriesIcon,
     DownloadImageIcon,
     DownloadSettingsIcon,
-    UploadSettingsIcon
+    NodesIcon,
+    StoriesIcon,
+    UploadSettingsIcon,
+    ZoomIcon
   }
 };
 </script>
@@ -113,6 +139,10 @@ export default {
   top: 50%;
   transform: translateY(-50%);
   border-radius: 0.5vw 0 0 0.5vw;
+}
+
+.icon {
+  transition: fill 0.3s;
 }
 
 .navigation--top .icon {
@@ -145,8 +175,13 @@ export default {
   background-color: #ccc;
 }
 .navigation__item:focus,
-.navigation__item:active {
+.navigation__item:active,
+.navigation__item.active {
   fill: #004e85;
+}
+
+.navigation__item.active {
+  background-color: #ccc;
 }
 
 .navigation__fileInput {

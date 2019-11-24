@@ -6,6 +6,9 @@
 
 <script>
 export default {
+  mounted() {
+    this.$on('toggle', this.toggleZoom);
+  },
   data() {
     return {
       zoom: 1

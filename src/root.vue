@@ -1,7 +1,7 @@
 <template>
   <main id="root">
     <Offset v-if="plan" @startShift="isShiftingPlan = true" @endShift="isShiftingPlan = false">
-      <Zoom @toggled="this.onZoomToggled">
+      <Zoom @toggled="this.onZoomToggled" ref="zoomEl">
         <div class="container" ref="containerEl">
           <img
             class="plan"
@@ -16,6 +16,7 @@
             :getContainerEl="() => $refs.containerEl"
             :isShiftingPlan="isShiftingPlan"
             :nodes="nodes"
+            :showLines="showLines"
             :zoom="zoom"
             @nodes="onNodes"
             @showNodeSettings="showNodeSettings"
@@ -28,6 +29,14 @@
       @navigate="navigate"
       :items="['plans', 'downloadImage', 'exportConfig', 'importConfig']"
       :alignment="'left'"
+    />
+    <Navigation
+      v-if="plan && isPlanLoaded"
+      @navigate="navigate"
+      :items="['toggleZoom', 'toggleLines']"
+      :alignment="'top'"
+      :zoom="zoom"
+      :showLines="showLines"
     />
     <NodePicker v-if="plan && isPlanLoaded" @picked="onNodePicked" :tmpNode="tmpNode" />
     <PlanManager v-if="!plan || isPlanManagerOpened" @selectedPlan="setPlan" />
@@ -80,6 +89,7 @@ export default {
       isPlanLoaded: false,
       isPlanManagerOpened: true,
       renderImageExport: false,
+      showLines: true,
       nodes: [],
       tmpNode: null,
       settingsNode: null,
@@ -192,6 +202,12 @@ export default {
           break;
         case 'importConfig':
           this.showConfigImportPreview(arg);
+          break;
+        case 'toggleZoom':
+          this.$refs.zoomEl.$emit('toggle');
+          break;
+        case 'toggleLines':
+          this.showLines = !this.showLines;
           break;
       }
     }

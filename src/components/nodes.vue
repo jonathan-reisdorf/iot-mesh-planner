@@ -35,6 +35,7 @@
       :style="{left: tmpX + '%', top: tmpY + '%' }"
     />
     <Lines
+      v-if="showLines"
       :getContainerEl="getContainerEl"
       :nodes="nodes"
       :tmpNode="tmpNode"
@@ -52,7 +53,14 @@ import Lines, { DRAW_LEVELS } from './lines.vue';
 import { NODES_START_MOVING_TIMEOUT } from '../config';
 
 export default {
-  props: ['getContainerEl', 'nodes', 'isShiftingPlan', 'tmpNode', 'zoom'],
+  props: [
+    'getContainerEl',
+    'nodes',
+    'isShiftingPlan',
+    'showLines',
+    'tmpNode',
+    'zoom'
+  ],
   data() {
     return {
       containerEl: null,
