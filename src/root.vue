@@ -23,7 +23,12 @@
         </div>
       </Zoom>
     </Offset>
-    <Navigation v-if="plan && isPlanLoaded" @navigate="navigate" />
+    <Navigation
+      v-if="plan && isPlanLoaded"
+      @navigate="navigate"
+      :items="['plans', 'downloadImage', 'exportConfig', 'importConfig']"
+      :alignment="'left'"
+    />
     <NodePicker v-if="plan && isPlanLoaded" @picked="onNodePicked" :tmpNode="tmpNode" />
     <PlanManager v-if="!plan || isPlanManagerOpened" @selectedPlan="setPlan" />
     <ImageExport

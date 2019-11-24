@@ -1,6 +1,7 @@
 <template>
-  <nav class="navigation">
+  <nav class="navigation" :class="`navigation--${alignment}`">
     <button
+      v-if="show.plans"
       type="button"
       class="navigation__item"
       title="Plans"
@@ -9,6 +10,7 @@
       <StoriesIcon />
     </button>
     <button
+      v-if="show.downloadImage"
       type="button"
       class="navigation__item"
       title="Download as image"
@@ -17,6 +19,7 @@
       <DownloadImageIcon />
     </button>
     <button
+      v-if="show.exportConfig"
       type="button"
       class="navigation__item"
       title="Export config (nodes and settings)"
@@ -25,6 +28,7 @@
       <DownloadSettingsIcon />
     </button>
     <button
+      v-if="show.importConfig"
       type="button"
       class="navigation__item"
       title="Import config (nodes and settings)"
@@ -49,6 +53,18 @@ import DownloadSettingsIcon from '../icons/settings-download.vue';
 import UploadSettingsIcon from '../icons/settings-upload.vue';
 
 export default {
+  props: {
+    items: Array,
+    alignment: String
+  },
+  data() {
+    return {
+      show: this.items.reduce(
+        (show, item) => Object.assign(show, { [item]: true }),
+        {}
+      )
+    };
+  },
   methods: {
     navigate(target, event = null, arg = null) {
       event && event.currentTarget.blur();
@@ -75,11 +91,33 @@ export default {
 <style scoped>
 .navigation {
   position: fixed;
+  background: #eee;
+}
+
+.navigation--left {
   top: 50%;
   left: 0;
   transform: translateY(-50%);
-  background: #eee;
   border-radius: 0 0.5vw 0.5vw 0;
+}
+.navigation--top {
+  display: flex;
+  flex-flow: row nowrap;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 0 0 0.5vw 0.5vw;
+}
+.navigation--right {
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 0.5vw 0 0 0.5vw;
+}
+
+.navigation--top .icon {
+  width: 32px;
+  height: 32px;
 }
 
 .navigation__item {
@@ -94,9 +132,15 @@ export default {
   fill: #4b413f;
   transition: background-color 0.3s, fill 0.3s;
 }
-.navigation__item + .navigation__item {
+
+.navigation--left .navigation__item + .navigation__item,
+.navigation--right .navigation__item + .navigation__item {
   margin-top: 0;
 }
+.navigation--top .navigation__item + .navigation__item {
+  margin-left: 0;
+}
+
 .navigation__item:hover {
   background-color: #ccc;
 }
