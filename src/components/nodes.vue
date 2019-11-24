@@ -251,4 +251,12 @@ export default {
   margin-left: -1px;
   width: 2px;
 }
+.nodes--zoomed .crosshair::before {
+  margin-top: -0.5px;
+  height: 1px;
+}
+.nodes--zoomed .crosshair::after {
+  margin-left: -0.5px;
+  width: 1px;
+}
 </style>
