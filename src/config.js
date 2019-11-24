@@ -89,7 +89,7 @@ export const NODES = [
     type: 'motion_sensor',
     title: 'Motion Sensor',
     icon: 'motion_sensor',
-    smart: 'active',
+    smart: 'passive',
     extension: false
   },
   {
