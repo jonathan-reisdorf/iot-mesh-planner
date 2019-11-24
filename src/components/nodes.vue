@@ -39,6 +39,7 @@
       :nodes="nodes"
       :tmpNode="tmpNode"
       :movingNode="movingNode"
+      :drawLevel="drawLevel"
       :zoom="zoom"
     />
   </div>
@@ -46,7 +47,7 @@
 
 <script>
 import Node from './node.vue';
-import Lines from './lines.vue';
+import Lines, { DRAW_LEVELS } from './lines.vue';
 
 import { NODES_START_MOVING_TIMEOUT } from '../config';
 
@@ -59,7 +60,8 @@ export default {
       movingNode: null,
       tmpX: null,
       tmpY: null,
-      startMovingTimeout: null
+      startMovingTimeout: null,
+      drawLevel: DRAW_LEVELS.lines
     };
   },
   mounted() {
