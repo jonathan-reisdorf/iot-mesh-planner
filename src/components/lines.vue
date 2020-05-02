@@ -113,7 +113,7 @@ export default {
       this.draw(false);
     },
     zoom() {
-      setTimeout(() => this.onCanvasResize(), 400); // wait for 300ms zoom transition
+      this.onCanvasResize(null, this.zoom === 1 ? 0.5 : 2);
     }
   },
   methods: Object.assign(
@@ -134,11 +134,11 @@ export default {
 
         return { smartDevices, activeDevices, passiveDevices, hubDevices };
       },
-      onCanvasResize() {
+      onCanvasResize(_, multiplier = 1) {
         const { width, height } = this.containerEl.getBoundingClientRect();
         this.ratio = height / width;
-        this.width = width;
-        this.height = height;
+        this.width = width * multiplier;
+        this.height = height * multiplier;
         this.draw(false);
       },
       getNeighbors(node, nodes, refNodes = null) {
