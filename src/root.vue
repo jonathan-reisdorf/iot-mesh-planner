@@ -1,5 +1,6 @@
 <template>
   <main id="root">
+    <div v-if="showClickGuard" @click="showClickGuard = false" class="clickGuard"></div>
     <Offset v-if="plan" @startShift="isShiftingPlan = true" @endShift="isShiftingPlan = false">
       <Zoom @toggled="this.onZoomToggled" ref="zoomEl">
         <div class="container" ref="containerEl">
@@ -94,6 +95,7 @@ export default {
       tmpNode: null,
       settingsNode: null,
       configToImport: null,
+      showClickGuard: false,
       zoom: 1
     };
   },
@@ -128,7 +130,8 @@ export default {
       this.planName = plan.fileName.split('.').shift() || 'plan';
       this.plan = plan;
     },
-    showNodeSettings(node) {
+    showNodeSettings(node, event) {
+      event.type === 'touchend' && (this.showClickGuard = true);
       this.settingsNode = node;
     },
     discardNodeSettings() {
@@ -252,6 +255,16 @@ body {
   overflow: hidden;
 }
 
+.clickGuard {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  z-index: 9;
+}
+
 .container {
   position: relative;
   flex: 0 1 auto;
@@ -262,7 +275,7 @@ body {
   width: auto;
   height: auto;
   max-width: calc(95vw - 6rem - 48px);
-  min-width: 800px;
+  /* min-width: 800px; TODO re-enable after fixing chromium bug */
 }
 
 .icon {

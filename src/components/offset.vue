@@ -19,6 +19,8 @@ export default {
     return {
       startX: null,
       startY: null,
+      moveX: null,
+      moveY: null,
       pendingOffsetX: 0,
       pendingOffsetY: 0,
       storedOffsetX: 0,
@@ -37,13 +39,12 @@ export default {
   },
   methods: {
     getCoords(event) {
-      const { clientX: x, clientY: y } = event.changedTouches
-        ? event.changedTouches[0]
-        : event;
+      const coords = event.changedTouches ? event.changedTouches[0] : event;
+      const { clientX: x = this.moveX, clientY: y = this.moveY } = coords || {};
       return { x, y };
     },
     startShift(event) {
-      event.preventDefault();
+      event.type === 'mousedown' && event.preventDefault();
 
       if (event.buttons === 2) {
         return;
@@ -52,6 +53,9 @@ export default {
       const coords = this.getCoords(event);
       this.startX = coords.x;
       this.startY = coords.y;
+
+      this.moveX = coords.x;
+      this.moveY = coords.y;
 
       this.startShiftTimeout = setTimeout(
         () => delete this.startShiftTimeout,
@@ -64,11 +68,14 @@ export default {
         return;
       }
 
-      event.preventDefault();
+      event.type === 'mousemove' && event.preventDefault();
 
       const coords = this.getCoords(event);
       const deltaX = coords.x - startX;
       const deltaY = coords.y - startY;
+
+      this.moveX = coords.x;
+      this.moveY = coords.y;
 
       if (
         Math.abs(deltaX) + Math.abs(deltaY) < PLAN_MOVE_THRESHOLD &&
@@ -111,6 +118,9 @@ export default {
       const coords = this.getCoords(event);
       const deltaX = coords.x - this.startX;
       const deltaY = coords.y - this.startY;
+
+      this.moveX = null;
+      this.moveY = null;
 
       Object.assign(this, {
         startX: null,

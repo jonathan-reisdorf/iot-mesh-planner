@@ -2,6 +2,7 @@
   <div
     class="nodes"
     :class="{'nodes--zoomed': zoom !== 1}"
+    v-touch:start="startPlacing"
     @mousemove="shift"
     v-touch:moving="shift"
     v-touch:end="place"
@@ -14,6 +15,8 @@
       :smart="tmpNode.smart"
       :extension="tmpNode.extension"
       :style="{left: tmpX + '%', top: tmpY + '%' }"
+      v-touch:moving="shift"
+      v-touch:end="place"
     />
     <Node
       v-for="node in nodes"
@@ -27,6 +30,7 @@
       :background="node.background"
       :style="getNodeStyle(node)"
       v-touch:start="event => setActiveKey(node.key, event)"
+      v-touch:moving="shift"
       v-touch:end="event => showNodeSettings(node.key, event)"
     />
     <div
@@ -92,13 +96,17 @@ export default {
         : event;
       return { x, y };
     },
+    startPlacing(event) {
+      this.tmpNode && event.stopPropagation();
+    },
     shift(event) {
       const { tmpNode, activeKey, containerEl } = this;
       if ((!tmpNode && !activeKey) || !containerEl) {
         return;
       }
 
-      event.preventDefault();
+      event.stopPropagation();
+      event.type === 'mousemove' && event.preventDefault();
       const { x: pointerX, y: pointerY } = this.getCoords(event);
       const {
         x: containerX,
@@ -157,7 +165,10 @@ export default {
         event.preventDefault();
         event.stopPropagation();
       }
-      this.$emit('nodes', this.nodes.filter(node => node.key !== key));
+      this.$emit(
+        'nodes',
+        this.nodes.filter(node => node.key !== key)
+      );
     },
     setActiveKey(key, event = null) {
       if (event && event.buttons === 4) {
@@ -181,7 +192,7 @@ export default {
         return;
       }
 
-      this.$emit('showNodeSettings', target);
+      this.$emit('showNodeSettings', target, event);
     }
   },
   components: {
