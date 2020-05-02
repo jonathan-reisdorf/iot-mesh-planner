@@ -5,7 +5,7 @@
 This tool allows you to create an electrical / IOT (Z-Wave / Zigbee / EnOcean ...) plan for your (future) home. Everything runs locally (localStorage), no data is uploaded anywhere.
 
 This is still a very early version, see "limitations".
-Currently it's best to use it on a desktop / laptop with a mouse and high resolution.
+Currently it's best to use it on a screen with high resolution.
 
 ![demo](demo.gif)
 
